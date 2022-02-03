@@ -31,7 +31,9 @@ export default function Register() {
         console.log(res);
       });
     } catch (err) {
-      console.log(err);
+      toast.error("Register Failed", {
+        theme: "colored",
+      });
     }
   };
 
