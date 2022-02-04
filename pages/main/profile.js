@@ -132,7 +132,9 @@ export default function Profile(props) {
                 <div className="row">
                   <div className="col-md-3"></div>
                   <div className="col-md-6">
-                    <img src="/foto-profil.png" />
+                    <center>
+                      <img src="/foto-profil.png" />
+                    </center>
                     <h3>{data.firstName + " " + data.lastName}</h3>
                     <p>081218049667</p>
                     <br />

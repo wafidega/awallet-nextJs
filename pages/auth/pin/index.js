@@ -10,12 +10,11 @@ import { unAuthPage } from "middleware/authorizationPage";
 //   // return { props: {} };
 // }
 
-export default function Login() {
+export default function Pin() {
   const router = useRouter();
-  const [form, setForm] = useState({ email: "", password: "" });
   const [pin, setPin] = useState({});
-  const [success, setSuccess] = useState(false);
 
+  // Handle Pin
   const addPin = (event) => {
     if (event.target.value) {
       const nextSibling = document.getElementById(
@@ -28,27 +27,31 @@ export default function Login() {
     }
 
     setPin({ ...pin, [`pin${event.target.name}`]: event.target.value });
-    console.log(setPin);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(pin);
+    const id = Cookie.get("id");
     const allPin = parseInt(
       pin.pin1 + pin.pin2 + pin.pin3 + pin.pin4 + pin.pin5 + pin.pin6
     );
-    console.log(allPin);
-    const id = Cookie.get("id");
-
     axios
       .patch(`/user/pin/${id}`, { pin: allPin })
       .then((res) => {
-        if (res.data.status === 200) setSuccess(true);
+        toast.success(res.data.msg, {
+          theme: "colored",
+        });
+        setTimeout(() => {
+          router.push("/main/home");
+        }, 3000);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.response.data.msg, {
+          theme: "colored",
+        });
       });
   };
-  console.log(Cookie.get("id"));
   return (
     <Layout title="Pin Confirmation">
       <div className="row">
@@ -79,10 +82,10 @@ export default function Login() {
               Zwallet account password and the PIN.
             </p>
             <form>
-              <div className="row" onSubmit={handleSubmit}>
+              <div className="row">
                 <div className="col">
                   <input
-                    type="text"
+                    type="password"
                     className="form-control"
                     placeholder=""
                     maxLength="1"
@@ -93,7 +96,7 @@ export default function Login() {
                 </div>
                 <div className="col">
                   <input
-                    type="text"
+                    type="password"
                     className="form-control"
                     placeholder=""
                     maxLength="1"
@@ -104,7 +107,7 @@ export default function Login() {
                 </div>
                 <div className="col">
                   <input
-                    type="text"
+                    type="password"
                     className="form-control"
                     placeholder=""
                     maxLength="1"
@@ -115,7 +118,7 @@ export default function Login() {
                 </div>
                 <div className="col">
                   <input
-                    type="text"
+                    type="password"
                     className="form-control"
                     placeholder=""
                     maxLength="1"
@@ -126,7 +129,7 @@ export default function Login() {
                 </div>
                 <div className="col">
                   <input
-                    type="text"
+                    type="password"
                     className="form-control"
                     placeholder=""
                     maxLength="1"
@@ -137,7 +140,7 @@ export default function Login() {
                 </div>
                 <div className="col">
                   <input
-                    type="text"
+                    type="password"
                     className="form-control"
                     placeholder=""
                     maxLength="1"
@@ -146,7 +149,10 @@ export default function Login() {
                     id="pin-6"
                   />
                 </div>
-                <button className="button-submit btn btn-primary mt-3">
+                <button
+                  className="button-submit btn btn-primary mt-3"
+                  onClick={handleSubmit}
+                >
                   Continue
                 </button>
               </div>

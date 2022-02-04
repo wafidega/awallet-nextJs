@@ -28,17 +28,21 @@ export default function Register() {
           theme: "colored",
         });
         router.push("/auth/login");
-        console.log(res);
       });
     } catch (err) {
-      toast.error("Register Failed", {
+      toast.error(err.response.data.msg, {
         theme: "colored",
       });
     }
   };
-
   const handleChangeText = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  // To Login Page
+  const Login = (e) => {
+    e.preventDefault();
+    router.push("/auth/login");
   };
 
   return (
@@ -135,6 +139,14 @@ export default function Register() {
                 Sign Up
               </button>
             </form>
+            <br />
+            <p>If you already have account go to sign in </p>
+            <button
+              className="button-submit btn btn-primary mt-3"
+              onClick={Login}
+            >
+              Sign In
+            </button>
           </div>
         </div>
       </div>

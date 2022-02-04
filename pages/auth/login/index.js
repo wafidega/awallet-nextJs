@@ -39,15 +39,19 @@ export default function Login() {
             router.push(`/auth/pin`);
           }, 3000);
         } else {
-          router.push("/main/home");
+          toast.success(res.data.msg, {
+            theme: "colored",
+          });
+          setTimeout(() => {
+            router.push("/main/home");
+          }, 3000);
         }
       })
       .catch((err) => {
-        toast.error("Login Failed", {
+        toast.error(err.response.data.msg, {
           theme: "colored",
         });
       });
-    console.log(form);
   };
   const handleChangeText = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -123,7 +127,7 @@ export default function Login() {
               </button>
             </form>
             <br />
-            <p>Belum punya akun? </p>
+            <p>If you don`t have a account please sign up first` </p>
             <button
               className="button-submit btn btn-primary mt-3"
               onClick={register}
