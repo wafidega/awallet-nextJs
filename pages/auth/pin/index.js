@@ -31,7 +31,6 @@ export default function Pin() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(pin);
     const id = Cookie.get("id");
     const allPin = parseInt(
       pin.pin1 + pin.pin2 + pin.pin3 + pin.pin4 + pin.pin5 + pin.pin6

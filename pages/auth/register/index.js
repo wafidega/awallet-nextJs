@@ -22,18 +22,19 @@ export default function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      axios.post("/auth/register", form).then((res) => {
+    axios
+      .post("/auth/register", form)
+      .then((res) => {
         toast.success("Sukses register Silahkan Cek Akun", {
           theme: "colored",
         });
         router.push("/auth/login");
+      })
+      .catch((err) => {
+        toast.error(err.response.data.msg, {
+          theme: "colored",
+        });
       });
-    } catch (err) {
-      toast.error(err.response.data.msg, {
-        theme: "colored",
-      });
-    }
   };
   const handleChangeText = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -41,7 +42,6 @@ export default function Register() {
 
   // To Login Page
   const Login = (e) => {
-    e.preventDefault();
     router.push("/auth/login");
   };
 
@@ -135,7 +135,10 @@ export default function Register() {
                   onChange={handleChangeText}
                 />
               </div>
-              <button className="button-submit btn btn-primary mt-3">
+              <button
+                className="button-submit btn btn-primary mt-3"
+                type="submit"
+              >
                 Sign Up
               </button>
             </form>
