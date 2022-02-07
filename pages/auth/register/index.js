@@ -5,13 +5,15 @@ import { useRouter } from "next/router";
 import Cookie from "js-cookie";
 import { unAuthPage } from "middleware/authorizationPage";
 import { ToastContainer, toast } from "react-toastify";
+import { connect } from "react-redux";
+import { RegisterUser } from "stores/action/auth";
 
 // export async function getServerSideProps(context) {
 //   // await unAuthPage(context); //login, register, forgor password
 //   // return { props: {} };
 // }
 
-export default function Register() {
+function Register(props) {
   const router = useRouter();
   const [form, setForm] = useState({
     firstName: "",
@@ -22,13 +24,29 @@ export default function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios
-      .post("/auth/register", form)
+    // axios
+    //   .post("/auth/register", form)
+    //   .then((res) => {
+    //     toast.success("Sukses register Silahkan Cek Akun", {
+    //       theme: "colored",
+    //     });
+    //     router.push("/auth/login");
+    //   })
+    //   .catch((err) => {
+    //     toast.error(err.response.data.msg, {
+    //       theme: "colored",
+    //     });
+    //   });
+    props
+      .RegisterUser(form)
       .then((res) => {
-        toast.success("Sukses register Silahkan Cek Akun", {
+        console.log(res);
+        toast.success(res.value.data.msg, {
           theme: "colored",
         });
-        router.push("/auth/login");
+        setTimeout(() => {
+          router.push("/auth/login");
+        }, 3000);
       })
       .catch((err) => {
         toast.error(err.response.data.msg, {
@@ -74,6 +92,7 @@ export default function Register() {
               wherever you are. Desktop, laptop, mobile phone? we cover all of
               that for you!
             </p>
+            <ToastContainer />
             <form onSubmit={handleSubmit}>
               {/* <label className="form-label">First Name</label> */}
               <div className="input-group input-group-sm mb-3">
@@ -156,3 +175,11 @@ export default function Register() {
     </Layout>
   );
 }
+
+const mapStateToProps = (state) => {
+  return { auth: state.auth };
+};
+
+const mapDispatchToProps = { RegisterUser };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);

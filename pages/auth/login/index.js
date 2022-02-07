@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import Cookie from "js-cookie";
 import { getDataCookie } from "middleware/authorizationPage";
 import { toast, ToastContainer } from "react-toastify";
+import { connect } from "react-redux";
+import { LoginUser } from "stores/action/auth";
 
 // export async function getServerSideProps(context) {
 //   const dataCookie = await getDataCookie(context);
@@ -19,27 +21,28 @@ import { toast, ToastContainer } from "react-toastify";
 //   return { props: {} };
 // }
 
-export default function Login() {
+function Login(props) {
   // Handle Login
   const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios
-      .post("/auth/login", form)
+    props
+      .LoginUser(form)
       .then((res) => {
-        Cookie.set("token", res.data.data.token);
-        Cookie.set("id", res.data.data.id);
-        if (res.data.data.pin === null) {
-          toast.success(res.data.msg, {
+        Cookie.set("token", res.value.data.data.token);
+        Cookie.set("id", res.value.data.data.id);
+        console.log(res);
+        if (res.value.data.data.pin === null) {
+          toast.success(res.value.data.msg, {
             theme: "colored",
           });
           setTimeout(() => {
             router.push(`/auth/pin`);
           }, 3000);
         } else {
-          toast.success(res.data.msg, {
+          toast.success(res.value.data.msg, {
             theme: "colored",
           });
           setTimeout(() => {
@@ -140,3 +143,11 @@ export default function Login() {
     </Layout>
   );
 }
+
+const mapStateToProps = (state) => {
+  return { auth: state.auth };
+};
+
+const mapDispatchToProps = { LoginUser };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

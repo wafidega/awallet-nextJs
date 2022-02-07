@@ -4,13 +4,16 @@ import axios from "utils/axios";
 import { useRouter } from "next/router";
 import Cookie from "js-cookie";
 import { unAuthPage } from "middleware/authorizationPage";
+import { ToastContainer, toast } from "react-toastify";
+import { PinUser } from "stores/action/auth";
+import { connect } from "react-redux";
 
 // export async function getServerSideProps(context) {
 //   // await unAuthPage(context); //login, register, forgor password
 //   // return { props: {} };
 // }
 
-export default function Pin() {
+function Pin(props) {
   const router = useRouter();
   const [pin, setPin] = useState({});
 
@@ -35,9 +38,25 @@ export default function Pin() {
     const allPin = parseInt(
       pin.pin1 + pin.pin2 + pin.pin3 + pin.pin4 + pin.pin5 + pin.pin6
     );
-    axios
-      .patch(`/user/pin/${id}`, { pin: allPin })
+    // axios
+    //   .patch(`/user/pin/${id}`, { pin: allPin })
+    //   .then((res) => {
+    //     toast.success(res.data.msg, {
+    //       theme: "colored",
+    //     });
+    //     setTimeout(() => {
+    //       router.push("/main/home");
+    //     }, 3000);
+    //   })
+    //   .catch((err) => {
+    //     toast.error(err.response.data.msg, {
+    //       theme: "colored",
+    //     });
+    //   });
+    props
+      .PinUser(id, { pin: allPin })
       .then((res) => {
+        console.log(res);
         toast.success(res.data.msg, {
           theme: "colored",
         });
@@ -46,6 +65,7 @@ export default function Pin() {
         }, 3000);
       })
       .catch((err) => {
+        console.log(err);
         toast.error(err.response.data.msg, {
           theme: "colored",
         });
@@ -80,6 +100,7 @@ export default function Pin() {
               Zwallet app. Keep it secret and don’t tell anyone about your
               Zwallet account password and the PIN.
             </p>
+            <ToastContainer />
             <form>
               <div className="row">
                 <div className="col">
@@ -162,3 +183,10 @@ export default function Pin() {
     </Layout>
   );
 }
+const mapStateToProps = (state) => {
+  return { auth: state.auth };
+};
+
+const mapDispatchToProps = { PinUser };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Pin);
