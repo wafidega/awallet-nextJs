@@ -11,3 +11,7 @@ export const RegisterUser = (form) => {
 export const PinUser = (id, data) => {
   return { type: "CREATE_PIN", payload: axios.patch(`/user/pin/${id}`, data) };
 };
+
+export const Logout = () => {
+  return { type: "LOGOUT", payload: axios.post("/auth/logout") };
+};

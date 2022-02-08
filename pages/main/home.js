@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "components/modules/Navbar";
+import SideBar from "components/modules/SideBar";
 import Balance from "components/modules/balance";
 import Layout from "components/Layout";
 import axios from "utils/axios";
@@ -58,59 +59,13 @@ export default function Home(props) {
 
   // SideBar
   const router = useRouter();
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  const logoutShow = () => setShow(true);
-
-  const logout = () => {
-    Cookie.remove("id");
-    Cookie.remove("token");
-    router.push("/auth/login");
-  };
-
-  const home = (e) => {
-    e.preventDefault();
-    router.push("/main/home");
-  };
-
-  const editProfile = (e) => {
-    e.preventDefault();
-    router.push("/main/profile");
-  };
-
   return (
     <>
       <Layout title="HomePage">
         <Navbar></Navbar>
         <main className="home-content">
           <div className="row">
-            <div className="col-md-3">
-              <div className="home-content-right d-flex align-items-start">
-                <div className="nav flex-column nav-pills me-3">
-                  <a className="home-active" onClick={home}>
-                    <i className="bi bi-ui-checks-grid"> </i>
-                    DASHBOARD
-                  </a>
-                  <br />
-                  <a href="#" onClick={home}>
-                    <i className="bi bi-arrow-up"></i>Transfer
-                  </a>
-                  <br />
-                  <a href="#" onClick={handleShow}>
-                    <i className="bi bi-plus"></i>Top-Up
-                  </a>
-                  <br />
-                  <a href="#" onClick={editProfile}>
-                    <i className="bi bi-person"></i>Profile
-                  </a>
-                  <br />
-                  <a href="#" onClick={logout}>
-                    <i className="bi bi-person"></i>Logout
-                  </a>
-                </div>
-              </div>
-            </div>
+            <SideBar />
             <div className="col-md-9">
               <div className="content-balance">
                 <div className="row">
@@ -150,23 +105,6 @@ export default function Home(props) {
             </div>
           </div>
         </main>
-
-        <Modal show={show} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>Top Up</Modal.Title>
-          </Modal.Header>
-
-          <Modal.Body>
-            <form>
-              <p>Enter amount of money</p>
-              <input type="text" />
-            </form>
-          </Modal.Body>
-
-          <Modal.Footer>
-            <Button variant="primary">Transfer</Button>
-          </Modal.Footer>
-        </Modal>
       </Layout>
     </>
   );

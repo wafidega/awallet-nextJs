@@ -4,6 +4,7 @@ import Link from "next/link";
 import axios from "utils/axios";
 import { getDataCookie } from "middleware/authorizationPage";
 import Cookie from "js-cookie";
+import Image from "next/image";
 
 // Render
 export async function getServerSideProps(context) {
@@ -64,11 +65,14 @@ export default function Navbar(props) {
           <a className="navbar-brand">A-Wallet</a>
           <div className="navbar-right d-flex">
             <div className="row">
-              <div className="col-sm-6">
-                <img src="/foto-profil.png" />
+              <div className="col-md-6 mt-1">
+                <div className="profile-image">
+                  <Image src="/foto-profil.png" width={52} height={52} />
+                </div>
               </div>
-              <div className="col-sm-6">
-                <p className="nav-profile-name">Wafi Dega</p>
+              <div className="col-md-6 text-md-start mt-1">
+                <p>Wafi Dega</p>
+                <p>081218049667</p>
               </div>
             </div>
           </div>
