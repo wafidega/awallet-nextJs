@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "components/modules/Navbar";
-import Balance from "components/modules/balance";
+import SideBar from "components/modules/SideBar";
 import Layout from "components/Layout";
 import axios from "utils/axios";
 import { getDataCookie } from "middleware/authorizationPage";
 import Cookie from "js-cookie";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
+import { toast, ToastContainer } from "react-toastify";
+import { connect } from "react-redux";
+import { UpdatePhoneNumber } from "stores/action/profile";
 
 // Rendering
 export async function getServerSideProps(context) {
@@ -35,7 +38,7 @@ export async function getServerSideProps(context) {
     props: { data: response },
   };
 }
-export default function Profile(props) {
+function AddPhone(props) {
   const [data, setData] = useState(props.data);
   const id = Cookie.get("id");
   const [phone, setPhone] = useState("");
@@ -61,14 +64,18 @@ export default function Profile(props) {
     const addPhone = {
       noTelp: phone,
     };
-
-    axios
-      .patch(`/user/profile/${id}`, addPhone)
+    props
+      .UpdatePhoneNumber(id, addPhone)
       .then((res) => {
-        console.log(res);
+        toast.info(res.value.data.msg, {
+          theme: "colored",
+        });
+        router.push("/main/personalInfo");
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.response.data.msg, {
+          theme: "colored",
+        });
       });
   };
   return (
@@ -78,27 +85,7 @@ export default function Profile(props) {
         <main className="home-content">
           <div className="row">
             <div className="col-md-3">
-              <div className="home-content-right d-flex align-items-start">
-                <div className="nav flex-column nav-pills me-3">
-                  <a href="#" className="home-active">
-                    <i className="bi bi-ui-checks-grid"> </i>
-                    DASHBOARD
-                  </a>
-                  <br />
-                  <a>
-                    <i className="bi bi-arrow-up"></i>Transfer
-                  </a>
-                  <br />
-                  <a>
-                    <i className="bi bi-plus"></i>Top-Up
-                  </a>
-                  <br />
-                  <a>
-                    <i className="bi bi-person"></i>Profile
-                  </a>
-                  <br />
-                </div>
-              </div>
+              <SideBar />
             </div>
             <div className="col-md-9">
               <div className="profile-personal card p-5">
@@ -109,6 +96,7 @@ export default function Profile(props) {
                   start transfering your money to another user.
                 </p>
                 <br />
+                <ToastContainer />
                 <form onSubmit={handleSubmit}>
                   <label className="form-label">Add Phone Number</label>
                   <div className="input-group input-group-sm mb-3">
@@ -118,6 +106,17 @@ export default function Profile(props) {
                       placeholder="Enter your phone number"
                       name="phone"
                       onChange={(e) => setPhone(e.target.value)}
+                      style={{
+                        height: "70px",
+                        width: "100%",
+                        textAlign: "center",
+                        fontSize: "20px",
+                        marginTop: "40px",
+                        marginBottom: "50px",
+                        border: "1px solid rgba(169, 169, 169, 0.6)",
+                        borderRadius: "10px",
+                        outline: "none",
+                      }}
                     />
                   </div>
                   <button className="button-submit btn btn-primary mt-3">
@@ -132,3 +131,10 @@ export default function Profile(props) {
     </>
   );
 }
+const mapStateToProps = (state) => {
+  return { profile: state.profile };
+};
+
+const mapDispatchToProps = { UpdatePhoneNumber };
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddPhone);

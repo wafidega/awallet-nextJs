@@ -34,7 +34,7 @@ axiosApiIntances.interceptors.response.use(
       alert(error.response.data.msg);
       Cookies.remove("token");
       Cookies.remove("id");
-      window.location.href = "/login";
+      window.location.href = "/auth/login";
     }
     return Promise.reject(error);
   }

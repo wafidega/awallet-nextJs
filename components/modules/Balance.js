@@ -2,10 +2,6 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 export default function Balance() {
-  const handleLogout = () => {
-    console.log("Logout");
-    Router.push("/login");
-  };
   return (
     <>
       <div className="content-balance">

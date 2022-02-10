@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "components/modules/Navbar";
-import Balance from "components/modules/balance";
+import SideBar from "components/modules/SideBar";
 import Layout from "components/Layout";
 import axios from "utils/axios";
 import { getDataCookie } from "middleware/authorizationPage";
 import Cookie from "js-cookie";
 import { useRouter } from "next/router";
+import { toast, ToastContainer } from "react-toastify";
+import { connect } from "react-redux";
+import { ChangePassword } from "stores/action/profile";
 
 // Rendering
 export async function getServerSideProps(context) {
@@ -35,7 +38,7 @@ export async function getServerSideProps(context) {
     props: { data: response },
   };
 }
-export default function Profile(props) {
+function UpdatePassword(props) {
   const [data, setData] = useState(props.data);
   const id = Cookie.get("id");
   const [oldPassword, setOldPassword] = useState("");
@@ -47,7 +50,7 @@ export default function Profile(props) {
     axios
       .get(`/user/profile/${id}`)
       .then((res) => {
-        // console.log(res);
+        console.log(res);
         setData(res.data.data);
       })
       .catch((err) => {
@@ -58,7 +61,7 @@ export default function Profile(props) {
     getDataUser();
   }, []);
   console.log(data);
-  // Change
+  // Change Password
   const handleSubmit = (e) => {
     e.preventDefault();
     const changePassword = {
@@ -67,44 +70,46 @@ export default function Profile(props) {
       confirmPassword: confirmPassword,
     };
 
-    axios
-      .patch(`/user/password/${id}`, changePassword)
+    // axios
+    //   .patch(`/user/password/${id}`, changePassword)
+    //   .then((res) => {
+    //     console.log(res);
+    //     // toast.info(res.value.data.msg, {
+    //     //   theme: "colored",
+    //     // });
+    //     toast.info(res.data.msg, {
+    //       theme: "colored",
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     toast.error(err.response.data.msg, {
+    //       theme: "colored",
+    //     });
+    //   });
+    props
+      .ChangePassword(id, changePassword)
       .then((res) => {
         console.log(res);
+        toast.info(res.value.data.msg, {
+          theme: "colored",
+        });
       })
       .catch((err) => {
         console.log(err);
+        toast.error(err.response.data.msg, {
+          theme: "colored",
+        });
       });
   };
+
   return (
     <>
       <Layout title="Change Password">
         <Navbar></Navbar>
         <main className="home-content">
           <div className="row">
-            <div className="col-md-3">
-              <div className="home-content-right d-flex align-items-start">
-                <div className="nav flex-column nav-pills me-3">
-                  <a href="#" className="home-active">
-                    <i className="bi bi-ui-checks-grid"> </i>
-                    DASHBOARD
-                  </a>
-                  <br />
-                  <a>
-                    <i className="bi bi-arrow-up"></i>Transfer
-                  </a>
-                  <br />
-                  <a>
-                    <i className="bi bi-plus"></i>Top-Up
-                  </a>
-                  <br />
-                  <a>
-                    <i className="bi bi-person"></i>Profile
-                  </a>
-                  <br />
-                </div>
-              </div>
-            </div>
+            <SideBar />
             <div className="col-md-9">
               <div className="profile-personal card p-5">
                 <h6>Change Password</h6>
@@ -117,6 +122,7 @@ export default function Profile(props) {
                 <div className="row">
                   <div className="col-md-3"></div>
                   <div className="col-md-6">
+                    <ToastContainer />
                     <form onSubmit={handleSubmit}>
                       <label className="form-label">Current Password</label>
                       <div className="input-group input-group-sm mb-3">
@@ -166,3 +172,10 @@ export default function Profile(props) {
     </>
   );
 }
+const mapStateToProps = (state) => {
+  return { profile: state.profile };
+};
+
+const mapDispatchToProps = { ChangePassword };
+
+export default connect(mapStateToProps, mapDispatchToProps)(UpdatePassword);

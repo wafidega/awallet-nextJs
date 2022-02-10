@@ -6,6 +6,8 @@ import axios from "utils/axios";
 import { getDataCookie } from "middleware/authorizationPage";
 import Cookie from "js-cookie";
 import { useRouter } from "next/router";
+import SideBar from "components/modules/SideBar";
+import { toast, ToastContainer } from "react-toastify";
 
 // Rendering
 export async function getServerSideProps(context) {
@@ -44,8 +46,12 @@ export default function Profile(props) {
     axios
       .get(`/user/profile/${id}`)
       .then((res) => {
-        // console.log(res);
+        console.log(res);
         setData(res.data.data);
+        setUpdateProfile({
+          firstName: res.data.data.firstName,
+          lastName: res.data.data.lastName,
+        });
       })
       .catch((err) => {
         console.log(err.response);
@@ -56,6 +62,37 @@ export default function Profile(props) {
   }, []);
   console.log(data);
 
+  // Update Profile
+  const [updateProfile, setUpdateProfile] = useState({
+    firstName: "",
+    lastName: "",
+  });
+
+  const handleUpdateProfile = (e) => {
+    e.preventDefault();
+    axios
+      .patch(`/user/profile/${id}`, updateProfile)
+      .then((res) => {
+        toast.info("Success Update", {
+          theme: "colored",
+        });
+        getDataUser();
+      })
+      .catch((err) => {
+        toast.error(err.response.data.msg, {
+          theme: "colored",
+        });
+      });
+  };
+
+  const handleProfile = (event) => {
+    setUpdateProfile({
+      ...updateProfile,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  // Push Update Phone
   const addPhone = (e) => {
     e.preventDefault();
     router.push("/main/addPhone");
@@ -67,29 +104,10 @@ export default function Profile(props) {
         <main className="home-content">
           <div className="row">
             <div className="col-md-3">
-              <div className="home-content-right d-flex align-items-start">
-                <div className="nav flex-column nav-pills me-3">
-                  <a href="#" className="home-active">
-                    <i className="bi bi-ui-checks-grid"> </i>
-                    DASHBOARD
-                  </a>
-                  <br />
-                  <a>
-                    <i className="bi bi-arrow-up"></i>Transfer
-                  </a>
-                  <br />
-                  <a>
-                    <i className="bi bi-plus"></i>Top-Up
-                  </a>
-                  <br />
-                  <a>
-                    <i className="bi bi-person"></i>Profile
-                  </a>
-                  <br />
-                </div>
-              </div>
+              <SideBar />
             </div>
             <div className="col-md-9">
+              <ToastContainer />
               <div className="profile-personal card p-5">
                 <h6>Personal Information</h6>
                 <br />
@@ -100,13 +118,33 @@ export default function Profile(props) {
                 </p>
                 <br />
                 <label>First Name</label>
-                <h3>{data.firstName}</h3>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="firstName"
+                  name="firstName"
+                  onChange={handleProfile}
+                  value={updateProfile.firstName}
+                />
                 <br />
                 <label>Last Name</label>
-                <h3>{data.lastName}</h3>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="lastname"
+                  name="lastName"
+                  onChange={handleProfile}
+                  value={updateProfile.lastName}
+                />
                 <br />
-                <label>Verified E-mail</label>
-                <h3>{data.email}</h3>
+                <center>
+                  <button
+                    className="button-submit btn btn-primary mt-3"
+                    onClick={handleUpdateProfile}
+                  >
+                    Update Info
+                  </button>
+                </center>
                 <br />
                 <label>Phone Number</label>
                 <h3>{data.noTelp}</h3>

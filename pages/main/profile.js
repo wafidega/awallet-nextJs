@@ -6,6 +6,10 @@ import axios from "utils/axios";
 import { getDataCookie } from "middleware/authorizationPage";
 import Cookie from "js-cookie";
 import { useRouter } from "next/router";
+import SideBar from "components/modules/SideBar";
+import { Modal, Button } from "react-bootstrap";
+import Image from "next/image";
+import { toast, ToastContainer } from "react-toastify";
 
 // Rendering
 export async function getServerSideProps(context) {
@@ -55,26 +59,79 @@ export default function Profile(props) {
   useEffect(() => {
     getDataUser();
   }, []);
-  console.log(data);
-  // SideBar
+  // Modal Pin and Confirm Pin
+  const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const logout = () => {
-    Cookie.remove("id");
-    Cookie.remove("token");
-    router.push("/auth/login");
+
+  const [pin, setPin] = useState({});
+
+  const addPin = (event) => {
+    if (event.target.value) {
+      const nextSibling = document.getElementById(
+        `pin-${parseInt(event.target.name, 10) + 1}`
+      );
+
+      if (nextSibling !== null) {
+        nextSibling.focus();
+      }
+    }
+
+    setPin({ ...pin, [`pin${event.target.name}`]: event.target.value });
   };
 
-  const home = (e) => {
+  const handleConfirmPin = (e) => {
     e.preventDefault();
-    router.push("/main/home");
+    const allPin = parseInt(
+      pin.pin1 + pin.pin2 + pin.pin3 + pin.pin4 + pin.pin5 + pin.pin6
+    );
+    console.log(allPin);
+    axios
+      .get(`/user/pin?pin=${allPin}`)
+      .then((res) => {
+        toast.info("COrrect Pin", {
+          theme: "colored",
+        });
+        setTimeout(() => {
+          router.push("/main/changePin");
+        }, 3000);
+      })
+      .catch((err) => {
+        toast.error(err.response.data.msg, {
+          theme: "colored",
+        });
+      });
   };
 
-  const editProfile = (e) => {
-    e.preventDefault();
-    router.push("/main/profile");
+  // Update Image
+  const [image, setImage] = useState(null);
+  const [updateImage, setUpdateImage] = useState(null);
+
+  const handleUpdateImage = (e) => {
+    const formData = new FormData();
+    formData.append("image", updateImage);
+    axios
+      .patch(`/user/image/${id}`, formData)
+      .then((res) => {
+        console.log(res);
+        console.log(formData);
+        toast.info("Update Image Success", {
+          theme: "colored",
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Update Image Failed", {
+          theme: "colored",
+        });
+      });
   };
-  // BUtton profile
+  const handleImage = (event) => {
+    setImage(URL.createObjectURL(event.target.files[0]));
+    setUpdateImage(event.target.files[0]);
+  };
+
+  // Button push Profile Page
   const ChangePassword = (e) => {
     e.preventDefault();
     router.push("/main/changePassword");
@@ -89,11 +146,7 @@ export default function Profile(props) {
     router.push("/main/personalInfo");
   };
 
-  const changePin = (e) => {
-    e.preventDefault();
-    router.push("/main/changePin");
-  };
-
+  console.log(data);
   return (
     <>
       <Layout title="Profile">
@@ -102,41 +155,42 @@ export default function Profile(props) {
           <div className="row">
             <div className="col-md-3">
               <div className="home-content-right d-flex align-items-start">
-                <div className="nav flex-column nav-pills me-3">
-                  <a className="home-active" onClick={home}>
-                    <i className="bi bi-ui-checks-grid"> </i>
-                    DASHBOARD
-                  </a>
-                  <br />
-                  <a href="#" onClick={home}>
-                    <i className="bi bi-arrow-up"></i>Transfer
-                  </a>
-                  <br />
-                  <a href="#" onClick={handleShow}>
-                    <i className="bi bi-plus"></i>Top-Up
-                  </a>
-                  <br />
-                  <a href="#" onClick={editProfile}>
-                    <i className="bi bi-person"></i>Profile
-                  </a>
-                  <br />
-                  <a href="#" onClick={logout}>
-                    <i className="bi bi-person"></i>Logout
-                  </a>
-                </div>
+                <SideBar />
                 {/* Modal */}
               </div>
             </div>
             <div className="col-md-9">
               <div className="profile-user-accept card p-5">
+                <ToastContainer />
                 <div className="row">
                   <div className="col-md-3"></div>
                   <div className="col-md-6">
                     <center>
-                      <img src="/foto-profil.png" />
+                      <img
+                        src={
+                          data.image
+                            ? `https://zwalet.herokuapp.com/uploads/${data.image}`
+                            : "/assets/image/zhongli.png"
+                        }
+                        // src="/assets/image/zhongli.png"
+                        alt="image-profile"
+                      />
+                      <input
+                        type="file"
+                        name="image"
+                        className="form-control"
+                        style={{ margin: 5 }}
+                        onChange={handleImage}
+                      />
+                      <button
+                        type="submit"
+                        className="update-button btn btn-primary"
+                        style={{ margin: 10 }}
+                        onClick={handleUpdateImage}
+                      >
+                        Update Image
+                      </button>
                     </center>
-                    <h3>{data.firstName + " " + data.lastName}</h3>
-                    <p>081218049667</p>
                     <br />
                     <br />
                     <br />
@@ -159,7 +213,7 @@ export default function Profile(props) {
                     <button
                       type="button"
                       className="profile-button btn btn-primary"
-                      onClick={changePin}
+                      onClick={handleShow}
                     >
                       Change Pin
                     </button>
@@ -172,6 +226,97 @@ export default function Profile(props) {
           </div>
         </main>
       </Layout>
+      {/* Modal */}
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>CONFIRM PIN</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <p>
+            Enter your current 6 digits Zwallet PIN below to continue to the
+            next steps.
+          </p>
+          <br />
+          <ToastContainer />
+          <form>
+            <div className="row">
+              <div className="col">
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder=""
+                  maxLength="1"
+                  name="1"
+                  id="pin-1"
+                  onChange={(event) => addPin(event)}
+                />
+              </div>
+              <div className="col">
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder=""
+                  maxLength="1"
+                  name="2"
+                  id="pin-2"
+                  onChange={(event) => addPin(event)}
+                />
+              </div>
+              <div className="col">
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder=""
+                  maxLength="1"
+                  name="3"
+                  id="pin-3"
+                  onChange={(event) => addPin(event)}
+                />
+              </div>
+              <div className="col">
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder=""
+                  maxLength="1"
+                  name="4"
+                  id="pin-4"
+                  onChange={(event) => addPin(event)}
+                />
+              </div>
+              <div className="col">
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder=""
+                  maxLength="1"
+                  name="5"
+                  id="pin-5"
+                  onChange={(event) => addPin(event)}
+                />
+              </div>
+              <div className="col">
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder=""
+                  maxLength="1"
+                  name="6"
+                  id="pin-6"
+                  onChange={(event) => addPin(event)}
+                />
+              </div>
+              <button
+                className="button-submit btn btn-primary mt-3"
+                onClick={handleConfirmPin}
+              >
+                Continue
+              </button>
+            </div>
+          </form>
+        </Modal.Body>
+      </Modal>
     </>
   );
 }

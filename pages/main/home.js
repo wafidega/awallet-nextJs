@@ -42,6 +42,9 @@ export default function Home(props) {
   const [data, setData] = useState(props.data);
   const id = Cookie.get("id");
   console.log(id);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   const getDataUser = () => {
     axios
       .get(`/user/profile/${id}`)
@@ -79,7 +82,10 @@ export default function Home(props) {
                       <button className="transfer btn btn-light">
                         <i className="bi bi-arrow-up"></i>Transfer
                       </button>
-                      <button className="top-up btn btn-light">
+                      <button
+                        className="top-up btn btn-light"
+                        onClick={handleShow}
+                      >
                         <i className="bi bi-plus"></i>Top-Up
                       </button>
                     </div>
@@ -106,6 +112,22 @@ export default function Home(props) {
           </div>
         </main>
       </Layout>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Top Up</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <form>
+            <p>Enter amount of money</p>
+            <input type="text" />
+          </form>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="primary">Transfer</Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }

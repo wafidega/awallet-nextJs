@@ -40,8 +40,7 @@ function Register(props) {
     props
       .RegisterUser(form)
       .then((res) => {
-        console.log(res);
-        toast.success(res.value.data.msg, {
+        toast.info(res.value.data.msg, {
           theme: "colored",
         });
         setTimeout(() => {

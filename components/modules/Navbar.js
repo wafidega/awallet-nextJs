@@ -47,7 +47,7 @@ export default function Navbar(props) {
     axios
       .get(`/user/profile/${id}`)
       .then((res) => {
-        // console.log(res);
+        console.log(res);
         setData(res.data.data);
       })
       .catch((err) => {
@@ -71,8 +71,8 @@ export default function Navbar(props) {
                 </div>
               </div>
               <div className="col-md-6 text-md-start mt-1">
-                <p>Wafi Dega</p>
-                <p>081218049667</p>
+                <p>{data.firstName + " " + data.lastName}</p>
+                <p>{data.noTelp}</p>
               </div>
             </div>
           </div>

@@ -56,8 +56,7 @@ function Pin(props) {
     props
       .PinUser(id, { pin: allPin })
       .then((res) => {
-        console.log(res);
-        toast.success(res.data.msg, {
+        toast.info(res.data.msg, {
           theme: "colored",
         });
         setTimeout(() => {
@@ -65,7 +64,6 @@ function Pin(props) {
         }, 3000);
       })
       .catch((err) => {
-        console.log(err);
         toast.error(err.response.data.msg, {
           theme: "colored",
         });

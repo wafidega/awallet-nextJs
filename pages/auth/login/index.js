@@ -33,16 +33,15 @@ function Login(props) {
       .then((res) => {
         Cookie.set("token", res.value.data.data.token);
         Cookie.set("id", res.value.data.data.id);
-        console.log(res);
         if (res.value.data.data.pin === null) {
-          toast.success(res.value.data.msg, {
+          toast.info(res.value.data.msg, {
             theme: "colored",
           });
           setTimeout(() => {
             router.push(`/auth/pin`);
           }, 3000);
         } else {
-          toast.success(res.value.data.msg, {
+          toast.info(res.value.data.msg, {
             theme: "colored",
           });
           setTimeout(() => {
