@@ -8,6 +8,7 @@ import { getDataCookie } from "middleware/authorizationPage";
 import Cookie from "js-cookie";
 import { useRouter } from "next/router";
 import { Modal, Button } from "react-bootstrap";
+import Chart from "components/modules/Chart";
 
 // Server Side Rendering
 export async function getServerSideProps(context) {
@@ -95,7 +96,9 @@ export default function Home(props) {
               <br />
               <div className="row">
                 <div className="col-md-6">
+                  {/* Insert Chart */}
                   {/* <img src="/diagram.png" className="image-diagram" /> */}
+                  <Chart />
                 </div>
                 <div className="col-md-6">
                   <div className="history-profile card p-5">

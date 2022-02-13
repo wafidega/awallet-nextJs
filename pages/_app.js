@@ -1,7 +1,7 @@
 import Head from "next/head";
 import "../styles/globals.css";
 import "bootstrap/dist/css/bootstrap.css";
-import "styles/login.css";
+import "styles/awallet.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "react-toastify/dist/ReactToastify.css";
 import { Provider } from "react-redux";

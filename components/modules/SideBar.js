@@ -40,9 +40,11 @@ export async function getServerSideProps(context) {
 function SideBar(props) {
   const router = useRouter();
   const [show, setShow] = useState(false);
+  const [showLogout, setLogout] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const logoutShow = () => setShow(true);
+  const logoutShow = () => setLogout(true);
+  const closeLogout = () => setLogout(false);
 
   const logout = () => {
     props
@@ -88,7 +90,7 @@ function SideBar(props) {
               <i className="bi bi-person"></i>Profile
             </a>
             <br />
-            <a href="#" onClick={logout}>
+            <a href="#" onClick={logoutShow}>
               <i className="bi bi-person"></i>Logout
             </a>
           </div>
@@ -108,6 +110,31 @@ function SideBar(props) {
 
         <Modal.Footer>
           <Button variant="primary">Transfer</Button>
+        </Modal.Footer>
+      </Modal>
+      {/* Modal Logout */}
+      <Modal show={showLogout} onHide={closeLogout}>
+        <Modal.Header closeButton>
+          <Modal.Title>Logout</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <h3>Are you sure you want to Logout?</h3>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <div className="row">
+            <div className="col-md-6">
+              <Button variant="danger" onClick={closeLogout}>
+                No
+              </Button>
+            </div>
+            <div className="col-md-6">
+              <Button variant="primary" onClick={logout}>
+                Yes
+              </Button>
+            </div>
+          </div>
         </Modal.Footer>
       </Modal>
     </>

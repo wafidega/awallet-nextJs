@@ -38,24 +38,8 @@ export async function getServerSideProps(context) {
   };
 }
 export default function Profile(props) {
-  const [data, setData] = useState(props.data);
   const id = Cookie.get("id");
   console.log(id);
-  const getDataUser = () => {
-    axios
-      .get(`/user/profile/${id}`)
-      .then((res) => {
-        // console.log(res);
-        setData(res.data.data);
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
-  };
-  useEffect(() => {
-    getDataUser();
-  }, []);
-  console.log(data);
   // Change Pin
   const [pin, setPin] = useState({});
   const addPin = (event) => {

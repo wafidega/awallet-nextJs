@@ -93,6 +93,12 @@ nav {
   font-size: 10px;
 }
 
+.image-profile-navbar {
+  width: 70px;
+  height: 70px;
+  border-radius: 5px;
+}
+
 /* Home */
 .home-content {
   padding: 50px;
@@ -158,6 +164,11 @@ nav {
 .profile-button {
   margin-bottom: 10px;
   width: 100%;
+}
+.image-profile {
+  width: 150px;
+  height: 150px;
+  border-radius: 20px;
 }
 
 /* personal */

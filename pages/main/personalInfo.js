@@ -8,86 +8,81 @@ import Cookie from "js-cookie";
 import { useRouter } from "next/router";
 import SideBar from "components/modules/SideBar";
 import { toast, ToastContainer } from "react-toastify";
+import { connect } from "react-redux";
+import { GetUserById } from "stores/action/profile";
+import { UpdateDataProfile } from "stores/action/profile";
 
-// Rendering
-export async function getServerSideProps(context) {
-  const dataCookie = await getDataCookie(context);
-  if (!dataCookie.isLogin) {
-    return {
-      redirect: {
-        destination: "/auth/login",
-        permanent: false,
-      },
-    };
-  }
-
-  const response = await axios
-    .get("/user?page=1&limit=2&search=&sort=", {
-      headers: {
-        Authorization: `Bearer ${dataCookie.token}`,
-      },
-    })
-    .then((res) => {
-      return res.data.data;
-    })
-    .catch((err) => {
-      return [];
-    });
-  return {
-    props: { data: response },
-  };
-}
-export default function Profile(props) {
-  const [data, setData] = useState(props.data);
-  const id = Cookie.get("id");
-  const router = useRouter();
-  console.log(id);
-  const getDataUser = () => {
-    axios
-      .get(`/user/profile/${id}`)
-      .then((res) => {
-        console.log(res);
-        setData(res.data.data);
-        setUpdateProfile({
-          firstName: res.data.data.firstName,
-          lastName: res.data.data.lastName,
-        });
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
-  };
-  useEffect(() => {
-    getDataUser();
-  }, []);
-  console.log(data);
-
-  // Update Profile
-  const [updateProfile, setUpdateProfile] = useState({
+function PersonalInfo(props) {
+  const [form, setForm] = useState({
     firstName: "",
     lastName: "",
   });
+  // const [updateProfile, setUpdateProfile] = useState({
+  //   firstName: "",
+  //   lastName: "",
+  // });
+  const id = Cookie.get("id");
+  const router = useRouter();
+  // const getDataUser = () => {
+  //   axios
+  //     .get(`/user/profile/${id}`)
+  //     .then((res) => {
+  //       console.log(res);
+  //       setData(res.data.data);
+  //       setUpdateProfile({
+  //         firstName: res.data.data.firstName,
+  //         lastName: res.data.data.lastName,
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       console.log(err.response);
+  //     });
+  // };
+  // useEffect(() => {
+  //   getDataUser();
+  // }, []);
+  // Get User Form Redux
+  console.log(props.profile);
+  useEffect(() => {
+    setForm({
+      firstName: props.profile.dataUser.firstName,
+      lastName: props.profile.dataUser.lastName,
+    });
+  }, [props.profile]);
 
+  // Update Profile
   const handleUpdateProfile = (e) => {
     e.preventDefault();
-    axios
-      .patch(`/user/profile/${id}`, updateProfile)
+    // axios
+    //   .patch(`/user/profile/${id}`, updateProfile)
+    //   .then((res) => {
+    //     toast.info("Success Update", {
+    //       theme: "colored",
+    //     });
+    //     getDataUser();
+    //   })
+    //   .catch((err) => {
+    //     toast.error(err.response.data.msg, {
+    //       theme: "colored",
+    //     });
+    //   });
+    console.log(form);
+    props
+      .UpdateDataProfile(id, form)
       .then((res) => {
+        console.log(res);
         toast.info("Success Update", {
           theme: "colored",
         });
-        getDataUser();
       })
       .catch((err) => {
-        toast.error(err.response.data.msg, {
-          theme: "colored",
-        });
+        console.log(err);
       });
   };
 
   const handleProfile = (event) => {
-    setUpdateProfile({
-      ...updateProfile,
+    setForm({
+      ...form,
       [event.target.name]: event.target.value,
     });
   };
@@ -124,7 +119,7 @@ export default function Profile(props) {
                   id="firstName"
                   name="firstName"
                   onChange={handleProfile}
-                  value={updateProfile.firstName}
+                  value={form.firstName}
                 />
                 <br />
                 <label>Last Name</label>
@@ -134,7 +129,7 @@ export default function Profile(props) {
                   id="lastname"
                   name="lastName"
                   onChange={handleProfile}
-                  value={updateProfile.lastName}
+                  value={form.lastName}
                 />
                 <br />
                 <center>
@@ -147,7 +142,7 @@ export default function Profile(props) {
                 </center>
                 <br />
                 <label>Phone Number</label>
-                <h3>{data.noTelp}</h3>
+                <h3>{props.profile.dataUser.noTelp}</h3>
                 <a className="d-flex" onClick={addPhone}>
                   Manage
                 </a>
@@ -160,3 +155,9 @@ export default function Profile(props) {
     </>
   );
 }
+const mapStateToProps = (state) => {
+  return { profile: state.profile };
+};
+
+const mapDispatchToProps = { GetUserById, UpdateDataProfile };
+export default connect(mapStateToProps, mapDispatchToProps)(PersonalInfo);

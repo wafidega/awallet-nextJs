@@ -10,6 +10,8 @@ import SideBar from "components/modules/SideBar";
 import { Modal, Button } from "react-bootstrap";
 import Image from "next/image";
 import { toast, ToastContainer } from "react-toastify";
+import { connect } from "react-redux";
+import { GetUserById } from "stores/action/profile";
 
 // Rendering
 export async function getServerSideProps(context) {
@@ -39,26 +41,37 @@ export async function getServerSideProps(context) {
     props: { data: response },
   };
 }
-export default function Profile(props) {
+function Profile(props) {
   // Mengambil data
   const [data, setData] = useState(props.data);
   const id = Cookie.get("id");
   const router = useRouter();
   console.log(id);
   const getDataUser = () => {
-    axios
-      .get(`/user/profile/${id}`)
+    // axios
+    //   .get(`/user/profile/${id}`)
+    //   .then((res) => {
+    //     // console.log(res);
+    //     setData(res.data.data);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err.response);
+    //   });
+    props
+      .GetUserById(id)
       .then((res) => {
-        // console.log(res);
-        setData(res.data.data);
+        console.log(res);
       })
       .catch((err) => {
-        console.log(err.response);
+        console.log(err);
       });
   };
   useEffect(() => {
     getDataUser();
   }, []);
+  useEffect(() => {
+    setData(props.profile.dataUser);
+  }, [props.profile]);
   // Modal Pin and Confirm Pin
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -153,12 +166,7 @@ export default function Profile(props) {
         <Navbar></Navbar>
         <main className="home-content">
           <div className="row">
-            <div className="col-md-3">
-              <div className="home-content-right d-flex align-items-start">
-                <SideBar />
-                {/* Modal */}
-              </div>
-            </div>
+            <SideBar />
             <div className="col-md-9">
               <div className="profile-user-accept card p-5">
                 <ToastContainer />
@@ -172,7 +180,7 @@ export default function Profile(props) {
                             ? `https://zwalet.herokuapp.com/uploads/${data.image}`
                             : "/assets/image/zhongli.png"
                         }
-                        // src="/assets/image/zhongli.png"
+                        className="image-profile"
                         alt="image-profile"
                       />
                       <input
@@ -320,3 +328,10 @@ export default function Profile(props) {
     </>
   );
 }
+const mapStateToProps = (state) => {
+  return { profile: state.profile };
+};
+
+const mapDispatchToProps = { GetUserById };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

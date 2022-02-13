@@ -5,59 +5,47 @@ import axios from "utils/axios";
 import { getDataCookie } from "middleware/authorizationPage";
 import Cookie from "js-cookie";
 import Image from "next/image";
+import { connect } from "react-redux";
+import { GetUserById } from "stores/action/profile";
 
-// Render
-export async function getServerSideProps(context) {
-  const dataCookie = await getDataCookie(context);
-  if (!dataCookie.isLogin) {
-    return {
-      redirect: {
-        destination: "/auth/login",
-        permanent: false,
-      },
-    };
-  }
+// // Render
+// export async function getServerSideProps(context) {
+//   const dataCookie = await getDataCookie(context);
+//   if (!dataCookie.isLogin) {
+//     return {
+//       redirect: {
+//         destination: "/auth/login",
+//         permanent: false,
+//       },
+//     };
+//   }
 
-  const response = await axios
-    .get("/user?page=1&limit=2&search=&sort=", {
-      headers: {
-        Authorization: `Bearer ${dataCookie.token}`,
-      },
-    })
-    .then((res) => {
-      return res.data.data;
-    })
-    .catch((err) => {
-      return [];
-    });
-  return {
-    props: { data: response },
-  };
-}
+//   const response = await axios
+//     .get("/user?page=1&limit=2&search=&sort=", {
+//       headers: {
+//         Authorization: `Bearer ${dataCookie.token}`,
+//       },
+//     })
+//     .then((res) => {
+//       return res.data.data;
+//     })
+//     .catch((err) => {
+//       return [];
+//     });
+//   return {
+//     props: { data: response },
+//   };
+// }
 
-export default function Navbar(props) {
-  // const handleLogout = () => {
-  //   console.log("Logout");
-  //   Router.push("/login");
-  // };
-  const [data, setData] = useState(props.data);
+function Navbar(props) {
+  const [data, setData] = useState({});
   const id = Cookie.get("id");
-  console.log(id);
-  const getDataUser = () => {
-    axios
-      .get(`/user/profile/${id}`)
-      .then((res) => {
-        console.log(res);
-        setData(res.data.data);
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
-  };
+
   useEffect(() => {
-    getDataUser();
-  }, []);
+    setData(props.profile.dataUser);
+  }, [props.profile]);
   console.log(data);
+
   return (
     <>
       <nav className="navbar navbar-light bg-light">
@@ -67,7 +55,16 @@ export default function Navbar(props) {
             <div className="row">
               <div className="col-md-6 mt-1">
                 <div className="profile-image">
-                  <Image src="/foto-profil.png" width={52} height={52} />
+                  <img
+                    src={
+                      data.image
+                        ? `https://zwalet.herokuapp.com/uploads/${data.image}`
+                        : "/assets/image/zhongli.png"
+                    }
+                    // src="/assets/image/zhongli.png"
+                    className="image-profile-navbar"
+                    alt="image-profile"
+                  />
                 </div>
               </div>
               <div className="col-md-6 text-md-start mt-1">
@@ -81,3 +78,10 @@ export default function Navbar(props) {
     </>
   );
 }
+const mapStateToProps = (state) => {
+  return { profile: state.profile };
+};
+
+const mapDispatchToProps = { GetUserById };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navbar);

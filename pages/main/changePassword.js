@@ -39,28 +39,10 @@ export async function getServerSideProps(context) {
   };
 }
 function UpdatePassword(props) {
-  const [data, setData] = useState(props.data);
   const id = Cookie.get("id");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  console.log(id);
-  // Ambil data User
-  const getDataUser = () => {
-    axios
-      .get(`/user/profile/${id}`)
-      .then((res) => {
-        console.log(res);
-        setData(res.data.data);
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
-  };
-  useEffect(() => {
-    getDataUser();
-  }, []);
-  console.log(data);
   // Change Password
   const handleSubmit = (e) => {
     e.preventDefault();
