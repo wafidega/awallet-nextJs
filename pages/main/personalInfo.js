@@ -17,32 +17,8 @@ function PersonalInfo(props) {
     firstName: "",
     lastName: "",
   });
-  // const [updateProfile, setUpdateProfile] = useState({
-  //   firstName: "",
-  //   lastName: "",
-  // });
   const id = Cookie.get("id");
   const router = useRouter();
-  // const getDataUser = () => {
-  //   axios
-  //     .get(`/user/profile/${id}`)
-  //     .then((res) => {
-  //       console.log(res);
-  //       setData(res.data.data);
-  //       setUpdateProfile({
-  //         firstName: res.data.data.firstName,
-  //         lastName: res.data.data.lastName,
-  //       });
-  //     })
-  //     .catch((err) => {
-  //       console.log(err.response);
-  //     });
-  // };
-  // useEffect(() => {
-  //   getDataUser();
-  // }, []);
-  // Get User Form Redux
-  console.log(props.profile);
   useEffect(() => {
     setForm({
       firstName: props.profile.dataUser.firstName,
@@ -53,19 +29,6 @@ function PersonalInfo(props) {
   // Update Profile
   const handleUpdateProfile = (e) => {
     e.preventDefault();
-    // axios
-    //   .patch(`/user/profile/${id}`, updateProfile)
-    //   .then((res) => {
-    //     toast.info("Success Update", {
-    //       theme: "colored",
-    //     });
-    //     getDataUser();
-    //   })
-    //   .catch((err) => {
-    //     toast.error(err.response.data.msg, {
-    //       theme: "colored",
-    //     });
-    //   });
     console.log(form);
     props
       .UpdateDataProfile(id, form)
@@ -74,6 +37,7 @@ function PersonalInfo(props) {
         toast.info("Success Update", {
           theme: "colored",
         });
+        props.GetUserById(id);
       })
       .catch((err) => {
         console.log(err);

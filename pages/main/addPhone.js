@@ -9,68 +9,31 @@ import router, { useRouter } from "next/router";
 import { toast, ToastContainer } from "react-toastify";
 import { connect } from "react-redux";
 import { UpdatePhoneNumber } from "stores/action/profile";
+import { GetUserById } from "stores/action/profile";
 
-// Rendering
-export async function getServerSideProps(context) {
-  const dataCookie = await getDataCookie(context);
-  if (!dataCookie.isLogin) {
-    return {
-      redirect: {
-        destination: "/auth/login",
-        permanent: false,
-      },
-    };
-  }
-
-  const response = await axios
-    .get("/user?page=1&limit=2&search=&sort=", {
-      headers: {
-        Authorization: `Bearer ${dataCookie.token}`,
-      },
-    })
-    .then((res) => {
-      return res.data.data;
-    })
-    .catch((err) => {
-      return [];
-    });
-  return {
-    props: { data: response },
-  };
-}
 function AddPhone(props) {
-  const [data, setData] = useState(props.data);
+  const [form, setForm] = useState({
+    noTelp: "",
+  });
   const id = Cookie.get("id");
-  const [phone, setPhone] = useState("");
-  console.log(id);
-  const getDataUser = () => {
-    axios
-      .get(`/user/profile/${id}`)
-      .then((res) => {
-        // console.log(res);
-        setData(res.data.data);
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
-  };
+  console.log(props.profile);
   useEffect(() => {
-    getDataUser();
-  }, []);
-  console.log(data);
-  // Change Pin
+    setForm({
+      noTelp: props.profile.dataUser.noTelp,
+    });
+  }, [props.profile]);
+  // Change Phone
   const handleSubmit = (e) => {
     e.preventDefault();
-    const addPhone = {
-      noTelp: phone,
-    };
+    console.log(form);
     props
-      .UpdatePhoneNumber(id, addPhone)
+      .UpdatePhoneNumber(id, form)
       .then((res) => {
         toast.info(res.value.data.msg, {
           theme: "colored",
         });
         router.push("/main/personalInfo");
+        props.GetUserById(id);
       })
       .catch((err) => {
         toast.error(err.response.data.msg, {
@@ -104,8 +67,14 @@ function AddPhone(props) {
                     <input
                       type="number"
                       placeholder="Enter your phone number"
-                      name="phone"
-                      onChange={(e) => setPhone(e.target.value)}
+                      name="noTelp"
+                      value={form.noTelp}
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          [e.target.name]: e.target.value,
+                        })
+                      }
                       style={{
                         height: "70px",
                         width: "100%",
@@ -135,6 +104,6 @@ const mapStateToProps = (state) => {
   return { profile: state.profile };
 };
 
-const mapDispatchToProps = { UpdatePhoneNumber };
+const mapDispatchToProps = { UpdatePhoneNumber, GetUserById };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddPhone);

@@ -9,34 +9,6 @@ import Cookie from "js-cookie";
 import { useRouter } from "next/router";
 import { toast, ToastContainer } from "react-toastify";
 
-// Rendering
-export async function getServerSideProps(context) {
-  const dataCookie = await getDataCookie(context);
-  if (!dataCookie.isLogin) {
-    return {
-      redirect: {
-        destination: "/auth/login",
-        permanent: false,
-      },
-    };
-  }
-
-  const response = await axios
-    .get("/user?page=1&limit=2&search=&sort=", {
-      headers: {
-        Authorization: `Bearer ${dataCookie.token}`,
-      },
-    })
-    .then((res) => {
-      return res.data.data;
-    })
-    .catch((err) => {
-      return [];
-    });
-  return {
-    props: { data: response },
-  };
-}
 export default function Profile(props) {
   const id = Cookie.get("id");
   console.log(id);

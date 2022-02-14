@@ -48,15 +48,6 @@ function Profile(props) {
   const router = useRouter();
   console.log(id);
   const getDataUser = () => {
-    // axios
-    //   .get(`/user/profile/${id}`)
-    //   .then((res) => {
-    //     // console.log(res);
-    //     setData(res.data.data);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err.response);
-    //   });
     props
       .GetUserById(id)
       .then((res) => {
@@ -69,6 +60,7 @@ function Profile(props) {
   useEffect(() => {
     getDataUser();
   }, []);
+
   useEffect(() => {
     setData(props.profile.dataUser);
   }, [props.profile]);

@@ -52,6 +52,7 @@ function SideBar(props) {
       .then((res) => {
         Cookie.remove("id");
         Cookie.remove("token");
+        localStorage.clear();
         router.push("/auth/login");
       })
       .catch((err) => {

@@ -7,6 +7,7 @@ import { getDataCookie } from "middleware/authorizationPage";
 import { toast, ToastContainer } from "react-toastify";
 import { connect } from "react-redux";
 import { LoginUser } from "stores/action/auth";
+import { GetUserById } from "stores/action/profile";
 
 // export async function getServerSideProps(context) {
 //   const dataCookie = await getDataCookie(context);
@@ -33,6 +34,7 @@ function Login(props) {
       .then((res) => {
         Cookie.set("token", res.value.data.data.token);
         Cookie.set("id", res.value.data.data.id);
+        props.GetUserById(res.value.data.data.id);
         if (res.value.data.data.pin === null) {
           toast.info(res.value.data.msg, {
             theme: "colored",
@@ -147,6 +149,6 @@ const mapStateToProps = (state) => {
   return { auth: state.auth };
 };
 
-const mapDispatchToProps = { LoginUser };
+const mapDispatchToProps = { LoginUser, GetUserById };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
