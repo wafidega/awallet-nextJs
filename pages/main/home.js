@@ -62,6 +62,11 @@ export default function Home(props) {
   }, []);
 
   // SideBar
+
+  const TransferPage = (e) => {
+    e.preventDefault();
+    router.push("/main/TransferPage");
+  };
   const router = useRouter();
   return (
     <>
@@ -80,7 +85,10 @@ export default function Home(props) {
                   </div>
                   <div className="balance-button col-md-6">
                     <div className="btn-group-vertical">
-                      <button className="transfer btn btn-light">
+                      <button
+                        className="transfer btn btn-light"
+                        onClick={TransferPage}
+                      >
                         <i className="bi bi-arrow-up"></i>Transfer
                       </button>
                       <button
@@ -107,6 +115,61 @@ export default function Home(props) {
                       <a href="#" className="get-all">
                         See All
                       </a>
+                    </div>
+                    <div>
+                      <div className="d-flex justify-content-between mt-4">
+                        <div className="d-flex">
+                          <img
+                            src="/assets/image/zhongli.png"
+                            alt="porfile"
+                            width="56px"
+                            height="56px"
+                            style={{
+                              borderRadius: "10px",
+                              objectFit: "cover",
+                            }}
+                          />
+                          <div className="ms-3">
+                            <h5 className="nunito-600">Wafi Dega</h5>
+                            <span className="nunito-400 font-thrid">
+                              Accept
+                            </span>
+                          </div>
+                        </div>
+                        <div
+                          className="align-self-center nunito-700"
+                          style={{ color: "#1EC15F" }}
+                        >
+                          +15.000
+                        </div>
+                      </div>
+                      {/* Tranfer */}
+                      <div className="d-flex justify-content-between mt-4">
+                        <div className="d-flex">
+                          <img
+                            src="/assets/image/zhongli.png"
+                            alt="porfile"
+                            width="56px"
+                            height="56px"
+                            style={{
+                              borderRadius: "10px",
+                              objectFit: "cover",
+                            }}
+                          />
+                          <div className="ms-3">
+                            <h5 className="nunito-600">Wafi Dega</h5>
+                            <span className="nunito-400 font-thrid">
+                              Transfer
+                            </span>
+                          </div>
+                        </div>
+                        <div
+                          className="align-self-center nunito-700"
+                          style={{ color: "#FF5B37" }}
+                        >
+                          -15.000
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

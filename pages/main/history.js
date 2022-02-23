@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "components/modules/Navbar";
-import Balance from "components/modules/balance";
+import SideBar from "components/modules/SideBar";
 import Layout from "components/Layout";
 import axios from "utils/axios";
 import { AuthPage } from "middleware/authorizationPage";
@@ -42,83 +42,70 @@ export default function History() {
 
   return (
     <>
-      <Layout title="HomePage">
+      <Layout title="Homepage">
         <Navbar></Navbar>
         <main className="home-content">
           <div className="row">
-            <div className="col-md-3">
-              <div className="home-content-right d-flex align-items-start">
-                <div className="nav flex-column nav-pills me-3">
-                  <a href="#" className="home-active">
-                    <i className="bi bi-ui-checks-grid"> </i>
-                    DASHBOARD
-                  </a>
-                  <br />
-                  <a>
-                    <i className="bi bi-arrow-up"></i>Transfer
-                  </a>
-                  <br />
-                  <a>
-                    <i className="bi bi-plus"></i>Top-Up
-                  </a>
-                  <br />
-                  <a>
-                    <i className="bi bi-person"></i>Profile
-                  </a>
-                  <br />
-                </div>
-              </div>
-            </div>
+            <SideBar />
             <div className="col-md-9">
               <div className="history-all card p-5">
-                <div className="row">
-                  <div className="col-md-6">
-                    <p>transaction History</p>
-                  </div>
-                  <div className="col-md-6">
-                    <select placeholder="Select Filter"></select>
-                  </div>
-                </div>
+                <p>Transaction History</p>
+                {/* <input
+                  type="text"
+                  className="form-control"
+                  id="search"
+                  name="search"
+                  placeholder="Search Receiver Here"
+                /> */}
                 {/* User */}
-                <hr />
-                <div className="history-user-accept card pt5">
-                  <div className="row">
-                    <div className="col-md-6">
-                      <div className="history-right">
-                        <div className="row">
-                          <div className="col-sm-2">
-                            <img src="/foto-profil.png" />
-                          </div>
-                          <div className="col-sm-10">
-                            <p className="nav-profile-name">Robert Chandler</p>
-                            <p className="nav-profile-name">Robert Chandler</p>
-                          </div>
-                        </div>
+                <div>
+                  <div className="d-flex justify-content-between mt-4">
+                    <div className="d-flex">
+                      <img
+                        src="/assets/image/zhongli.png"
+                        alt="porfile"
+                        width="56px"
+                        height="56px"
+                        style={{
+                          borderRadius: "10px",
+                          objectFit: "cover",
+                        }}
+                      />
+                      <div className="ms-3">
+                        <h5 className="nunito-600">Wafi Dega</h5>
+                        <span className="nunito-400 font-thrid">Accept</span>
                       </div>
                     </div>
-                    <div className="col-md-6">
-                      <h4 className="amount-history-accept">+1200000</h4>
+                    <div
+                      className="align-self-center nunito-700"
+                      style={{ color: "#1EC15F" }}
+                    >
+                      +15.000
                     </div>
                   </div>
-                </div>
-                <hr />
-                <div className="history-user-transfer card pt5">
-                  <div className="row">
-                    <div className="col-md-6">
-                      <div className="history-right">
-                        <div className="row">
-                          <div className="col-sm-2">
-                            <img src="/foto-profil.png" />
-                          </div>
-                          <div className="col-sm-10">
-                            <p className="nav-profile-name">Robert Chandler</p>
-                            <p className="nav-profile-name">Robert Chandler</p>
-                          </div>
-                        </div>
+                  {/* Tranfer */}
+                  <div className="d-flex justify-content-between mt-4">
+                    <div className="d-flex">
+                      <img
+                        src="/assets/image/zhongli.png"
+                        alt="porfile"
+                        width="56px"
+                        height="56px"
+                        style={{
+                          borderRadius: "10px",
+                          objectFit: "cover",
+                        }}
+                      />
+                      <div className="ms-3">
+                        <h5 className="nunito-600">Wafi Dega</h5>
+                        <span className="nunito-400 font-thrid">Transfer</span>
                       </div>
                     </div>
-                    <div className="col-md-6">
-                      <h4 className="amount-history-transfer">-1200000</h4>
+                    <div
+                      className="align-self-center nunito-700"
+                      style={{ color: "#FF5B37" }}
+                    >
+                      -15.000
                     </div>
                   </div>
                 </div>

@@ -104,6 +104,30 @@ const profile = (state = initialState, action) => {
         msg: action.payload.response.data.msg,
       };
     }
+    // Update Image
+    case "UPDATE_IMAGE_PENDING": {
+      return {
+        ...state,
+        isLoading: true,
+        isError: false,
+      };
+    }
+    case "UPDATE_IMAGE_FULFILLED": {
+      return {
+        ...state,
+        isLoading: false,
+        isError: false,
+        msg: action.payload.data.msg,
+      };
+    }
+    case "UPDATE_IMAGE_REJECTED": {
+      return {
+        ...state,
+        isLoading: false,
+        isError: true,
+        msg: action.payload.response.data.msg,
+      };
+    }
     default: {
       return state;
     }

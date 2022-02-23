@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "styles/awallet.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "react-toastify/dist/ReactToastify.css";
+import "sweetalert2/dist/sweetalert2.min.css";
 import { Provider } from "react-redux";
 import { store, persistor } from "stores";
 import { PersistGate } from "redux-persist/integration/react";

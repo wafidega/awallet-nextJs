@@ -34,3 +34,14 @@ export const UpdateDataProfile = (id, form) => {
     payload: axios.patch(`/user/profile/${id}`, form),
   };
 };
+
+export const UpdateProfileImage = (id, form) => {
+  return {
+    type: "UPDATE_IMAGE",
+    payload: axios.patch(`/user/image/${id}`, form),
+  };
+};
+
+export const UpdatePin = (id, data) => {
+  return { type: "UPDATE_PIN", payload: axios.patch(`/user/pin/${id}`, data) };
+};

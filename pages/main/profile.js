@@ -12,54 +12,42 @@ import Image from "next/image";
 import { toast, ToastContainer } from "react-toastify";
 import { connect } from "react-redux";
 import { GetUserById } from "stores/action/profile";
+import { ConfirmPin } from "stores/action/profile";
+import { UpdateProfileImage } from "stores/action/profile";
 
 // Rendering
-export async function getServerSideProps(context) {
-  const dataCookie = await getDataCookie(context);
-  if (!dataCookie.isLogin) {
-    return {
-      redirect: {
-        destination: "/auth/login",
-        permanent: false,
-      },
-    };
-  }
+// export async function getServerSideProps(context) {
+//   const dataCookie = await getDataCookie(context);
+//   if (!dataCookie.isLogin) {
+//     return {
+//       redirect: {
+//         destination: "/auth/login",
+//         permanent: false,
+//       },
+//     };
+//   }
 
-  const response = await axios
-    .get("/user?page=1&limit=2&search=&sort=", {
-      headers: {
-        Authorization: `Bearer ${dataCookie.token}`,
-      },
-    })
-    .then((res) => {
-      return res.data.data;
-    })
-    .catch((err) => {
-      return [];
-    });
-  return {
-    props: { data: response },
-  };
-}
+//   const response = await axios
+//     .get("/user?page=1&limit=2&search=&sort=", {
+//       headers: {
+//         Authorization: `Bearer ${dataCookie.token}`,
+//       },
+//     })
+//     .then((res) => {
+//       return res.data.data;
+//     })
+//     .catch((err) => {
+//       return [];
+//     });
+//   return {
+//     props: { data: response },
+//   };
+// }
 function Profile(props) {
   // Mengambil data
-  const [data, setData] = useState(props.data);
+  const [data, setData] = useState({});
   const id = Cookie.get("id");
   const router = useRouter();
-  console.log(id);
-  const getDataUser = () => {
-    props
-      .GetUserById(id)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  useEffect(() => {
-    getDataUser();
-  }, []);
 
   useEffect(() => {
     setData(props.profile.dataUser);
@@ -90,11 +78,11 @@ function Profile(props) {
     const allPin = parseInt(
       pin.pin1 + pin.pin2 + pin.pin3 + pin.pin4 + pin.pin5 + pin.pin6
     );
-    console.log(allPin);
-    axios
-      .get(`/user/pin?pin=${allPin}`)
+    props
+      .ConfirmPin(allPin)
       .then((res) => {
-        toast.info("COrrect Pin", {
+        console.log(res);
+        toast.info(res.value.data.msg, {
           theme: "colored",
         });
         setTimeout(() => {
@@ -105,9 +93,13 @@ function Profile(props) {
         toast.error(err.response.data.msg, {
           theme: "colored",
         });
+        ResetPin();
       });
   };
 
+  const ResetPin = () => {
+    setPin({});
+  };
   // Update Image
   const [image, setImage] = useState(null);
   const [updateImage, setUpdateImage] = useState(null);
@@ -115,18 +107,19 @@ function Profile(props) {
   const handleUpdateImage = (e) => {
     const formData = new FormData();
     formData.append("image", updateImage);
-    axios
-      .patch(`/user/image/${id}`, formData)
+    props
+      .UpdateProfileImage(id, formData)
       .then((res) => {
         console.log(res);
         console.log(formData);
-        toast.info("Update Image Success", {
+        toast.info(res.value.data.msg, {
           theme: "colored",
         });
+        props.GetUserById(id);
       })
       .catch((err) => {
         console.log(err);
-        toast.error("Update Image Failed", {
+        toast.error(err.response.data.msg, {
           theme: "colored",
         });
       });
@@ -142,16 +135,10 @@ function Profile(props) {
     router.push("/main/changePassword");
   };
 
-  useEffect(() => {
-    getDataUser();
-  }, []);
-
   const personal = (e) => {
     e.preventDefault();
     router.push("/main/personalInfo");
   };
-
-  console.log(data);
   return (
     <>
       <Layout title="Profile">
@@ -324,6 +311,11 @@ const mapStateToProps = (state) => {
   return { profile: state.profile };
 };
 
-const mapDispatchToProps = { GetUserById };
+const mapDispatchToProps = {
+  GetUserById,
+  ConfirmPin,
+  UpdateProfileImage,
+  GetUserById,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

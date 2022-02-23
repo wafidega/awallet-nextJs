@@ -45,7 +45,7 @@ function SideBar(props) {
   const handleShow = () => setShow(true);
   const logoutShow = () => setLogout(true);
   const closeLogout = () => setLogout(false);
-
+  // Handle Logout
   const logout = () => {
     props
       .Logout()
@@ -59,7 +59,25 @@ function SideBar(props) {
         console.log(err);
       });
   };
+  // Hnadle Top-Up
+  const [amount, setAmount] = useState({
+    amount: "",
+  });
+  const handleTopUp = (e) => {
+    e.preventDefault();
+    console.log(amount);
+    axios
+      .post(`/transaction/top-up`, amount)
+      .then((res) => {
+        console.log(res);
+        window.open(res.data.data.redirectUrl, "_blank");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
+  //
   const home = (e) => {
     e.preventDefault();
     router.push("/main/home");
@@ -68,6 +86,11 @@ function SideBar(props) {
   const editProfile = (e) => {
     e.preventDefault();
     router.push("/main/profile");
+  };
+
+  const TransferPage = (e) => {
+    e.preventDefault();
+    router.push("/main/TransferPage");
   };
   return (
     <>
@@ -79,7 +102,7 @@ function SideBar(props) {
               DASHBOARD
             </a>
             <br />
-            <a href="#" onClick={home}>
+            <a href="#" onClick={TransferPage}>
               <i className="bi bi-arrow-up"></i>Transfer
             </a>
             <br />
@@ -97,20 +120,30 @@ function SideBar(props) {
           </div>
         </div>
       </div>
+      {/* Modal Top Up */}
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Top Up</Modal.Title>
         </Modal.Header>
-
         <Modal.Body>
           <form>
             <p>Enter amount of money</p>
-            <input type="text" />
+            <input
+              type="text"
+              name="amount"
+              onChange={(e) =>
+                setAmount({
+                  ...amount,
+                  [e.target.name]: e.target.value,
+                })
+              }
+            />
           </form>
         </Modal.Body>
-
         <Modal.Footer>
-          <Button variant="primary">Transfer</Button>
+          <Button variant="primary" onClick={handleTopUp}>
+            Top-Up
+          </Button>
         </Modal.Footer>
       </Modal>
       {/* Modal Logout */}

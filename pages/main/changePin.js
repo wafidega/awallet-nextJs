@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "components/modules/Navbar";
 import SideBar from "components/modules/SideBar";
-import Balance from "components/modules/balance";
 import Layout from "components/Layout";
 import axios from "utils/axios";
 import { getDataCookie } from "middleware/authorizationPage";
 import Cookie from "js-cookie";
 import { useRouter } from "next/router";
 import { toast, ToastContainer } from "react-toastify";
+import { connect } from "react-redux";
+import { UpdatePin } from "stores/action/profile";
 
-export default function Profile(props) {
+function ChangePin(props) {
   const id = Cookie.get("id");
-  console.log(id);
   // Change Pin
   const [pin, setPin] = useState({});
   const addPin = (event) => {
@@ -32,14 +32,11 @@ export default function Profile(props) {
     const allPin = parseInt(
       pin.pin1 + pin.pin2 + pin.pin3 + pin.pin4 + pin.pin5 + pin.pin6
     );
-    console.log(allPin);
     const id = Cookie.get("id");
-
-    axios
-      .patch(`/user/pin/${id}`, { pin: allPin })
+    props
+      .UpdatePin(id, { pin: allPin })
       .then((res) => {
-        // if (res.data.status === 200) setSuccess(true);
-        toast.info("Your Pin Changed", {
+        toast.info(res.value.data.msg, {
           theme: "colored",
         });
       })
@@ -147,3 +144,12 @@ export default function Profile(props) {
     </>
   );
 }
+const mapStateToProps = (state) => {
+  return { profile: state.profile };
+};
+
+const mapDispatchToProps = {
+  UpdatePin,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChangePin);
