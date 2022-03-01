@@ -6,20 +6,20 @@ import Layout from "components/Layout";
 import axios from "utils/axios";
 import { AuthPage } from "middleware/authorizationPage";
 
-export default function TransferPage() {
+export default function TransferPage(props) {
   const router = useRouter();
   const [dataSearch, setDataSearch] = useState({
     page: 1,
     limit: 50,
-    search: "",
     sort: "",
   });
+  const [searchPage, setSearchPage] = useState("");
   const [SearchView, setSearchView] = useState([]);
 
   const handleSearch = (event) => {
     axios
       .get(
-        `user?page=${dataSearch.page}&limit=${dataSearch.limit}&search=${dataSearch.search}&sort=${dataSearch.sort}`
+        `user?page=${dataSearch.page}&limit=${dataSearch.limit}&search=${searchPage}&sort=${dataSearch.sort}`
       )
       .then((res) => {
         setSearchView(res.data.data);
@@ -28,9 +28,17 @@ export default function TransferPage() {
         console.log(error);
       });
   };
+  // const changeSearch = (event) => {
+  //   setDataSearch({
+  //     search: event.target.value,
+  //   });
+  // };
+
   const detailProfile = (data) => {
     console.log(data);
-    router.push("/main/TransferDetail", data);
+    // router.push("/main/transferAmount", { data });
+    router.push({ pathname: "/main/transferAmount", query: { ...data } });
+    // props.history.push("/main/transferAmount", data);
   };
   useEffect(() => {
     handleSearch();
@@ -52,13 +60,16 @@ export default function TransferPage() {
                   id="search"
                   name="search"
                   placeholder="Search Receiver Here"
+                  // onChange={changeSearch}
+                  onChange={(e) => setSearchPage(e.target.value)}
                 />
                 <button
-                  type="button"
+                  type="submit"
                   className="btn btn-primary"
                   style={{
                     marginTop: "20px",
                   }}
+                  onClick={handleSearch}
                 >
                   Search
                 </button>

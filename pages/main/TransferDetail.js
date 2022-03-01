@@ -4,13 +4,61 @@ import SideBar from "components/modules/SideBar";
 import Layout from "components/Layout";
 import { Modal, Button } from "react-bootstrap";
 import axios from "utils/axios";
+import { toast, ToastContainer } from "react-toastify";
+import { connect } from "react-redux";
+import { ConfirmPin } from "stores/action/profile";
 
-export default function TransferDetail(props) {
+function TransferDetail(props) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   console.log(props);
+
+  // Confirm Pin
+  const [pin, setPin] = useState({});
+
+  const addPin = (event) => {
+    if (event.target.value) {
+      const nextSibling = document.getElementById(
+        `pin-${parseInt(event.target.name, 10) + 1}`
+      );
+
+      if (nextSibling !== null) {
+        nextSibling.focus();
+      }
+    }
+
+    setPin({ ...pin, [`pin${event.target.name}`]: event.target.value });
+  };
+
+  const handleConfirmPin = (e) => {
+    e.preventDefault();
+    const allPin = parseInt(
+      pin.pin1 + pin.pin2 + pin.pin3 + pin.pin4 + pin.pin5 + pin.pin6
+    );
+    props
+      .ConfirmPin(allPin)
+      .then((res) => {
+        console.log(res);
+        toast.info(res.value.data.msg, {
+          theme: "colored",
+        });
+        setTimeout(() => {
+          router.push("/main/changePin");
+        }, 3000);
+      })
+      .catch((err) => {
+        toast.error(err.response.data.msg, {
+          theme: "colored",
+        });
+        ResetPin();
+      });
+  };
+
+  const ResetPin = () => {
+    setPin({});
+  };
 
   return (
     <>
@@ -157,22 +205,103 @@ export default function TransferDetail(props) {
       </Layout>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Transfer</Modal.Title>
+          <Modal.Title>CONFIRM PIN</Modal.Title>
         </Modal.Header>
+
         <Modal.Body>
+          <p>
+            Enter your current 6 digits Zwallet PIN below to continue to the
+            next steps.
+          </p>
+          <br />
+          <ToastContainer />
           <form>
-            <p>Enter Receiver Number</p>
-            <input type="text" name="receiverId" />
-            <p>Enter Amount</p>
-            <input type="text" name="amount" />
-            <p>Enter Notes</p>
-            <input type="text" name="notes" />
+            <div className="row">
+              <div className="col">
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder=""
+                  maxLength="1"
+                  name="1"
+                  id="pin-1"
+                  onChange={(event) => addPin(event)}
+                />
+              </div>
+              <div className="col">
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder=""
+                  maxLength="1"
+                  name="2"
+                  id="pin-2"
+                  onChange={(event) => addPin(event)}
+                />
+              </div>
+              <div className="col">
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder=""
+                  maxLength="1"
+                  name="3"
+                  id="pin-3"
+                  onChange={(event) => addPin(event)}
+                />
+              </div>
+              <div className="col">
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder=""
+                  maxLength="1"
+                  name="4"
+                  id="pin-4"
+                  onChange={(event) => addPin(event)}
+                />
+              </div>
+              <div className="col">
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder=""
+                  maxLength="1"
+                  name="5"
+                  id="pin-5"
+                  onChange={(event) => addPin(event)}
+                />
+              </div>
+              <div className="col">
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder=""
+                  maxLength="1"
+                  name="6"
+                  id="pin-6"
+                  onChange={(event) => addPin(event)}
+                />
+              </div>
+              <button
+                className="button-submit btn btn-primary mt-3"
+                onClick={handleConfirmPin}
+              >
+                Continue
+              </button>
+            </div>
           </form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary">Transfer</Button>
-        </Modal.Footer>
       </Modal>
     </>
   );
 }
+const mapStateToProps = (state) => {
+  return { profile: state.profile };
+};
+
+const mapDispatchToProps = {
+  ConfirmPin,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TransferDetail);
