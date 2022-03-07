@@ -8,12 +8,29 @@ import axios from "utils/axios";
 
 function TransactionAmount(props) {
   const router = useRouter();
-  const detailProfile = () => {
-    router.push("/main/TransferDetail");
-  };
-
   const dataUser = router.query;
   console.log(dataUser);
+  const [dataTransfer, setDataTransfer] = useState({
+    receiverId: dataUser.id,
+    amount: "",
+    notes: "",
+  });
+  // console.log(dataTransfer);
+  const handleDataTransfer = (event) => {
+    setDataTransfer({
+      ...dataTransfer,
+      [event.target.name]: event.target.value,
+    });
+  };
+  const detailProfile = () => {
+    console.log(dataTransfer);
+    // router.push("/main/TransferDetail");
+    router.push({
+      pathname: "/main/TransferDetail",
+      query: { ...dataTransfer },
+    });
+  };
+
   return (
     <>
       <Layout title="Transfer Page">
@@ -59,7 +76,7 @@ function TransactionAmount(props) {
                       <div className="ms-3">
                         <h5 className="nunito-600">{dataUser.firstName}</h5>
                         <span className="nunito-400 font-thrid">
-                          081218049667
+                          {dataUser.noTelp}
                         </span>
                       </div>
                     </div>
@@ -100,20 +117,8 @@ function TransactionAmount(props) {
                         border: "none",
                         outline: "none",
                       }}
+                      onChange={handleDataTransfer}
                     />
-
-                    {/* {underValue && (
-                      <p
-                        style={{
-                          color: "#ff5b37",
-                          textAlign: "center",
-                          marginTop: "20px",
-                        }}
-                      >
-                        Minimum {formatRp(10000)} to transfer
-                      </p>
-                    )} */}
-
                     <h5
                       className="nunito-700"
                       style={{ marginTop: "40px", marginBottom: "60px" }}
@@ -125,6 +130,7 @@ function TransactionAmount(props) {
                       name="notes"
                       type="text"
                       placeholder="Add some notes"
+                      onChange={handleDataTransfer}
                     />
                   </div>
 

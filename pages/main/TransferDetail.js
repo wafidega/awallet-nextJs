@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useRouter, withRouter } from "next/router";
 import Navbar from "components/modules/Navbar";
 import SideBar from "components/modules/SideBar";
 import Layout from "components/Layout";
@@ -7,17 +8,40 @@ import axios from "utils/axios";
 import { toast, ToastContainer } from "react-toastify";
 import { connect } from "react-redux";
 import { ConfirmPin } from "stores/action/profile";
+import { GetUserById } from "stores/action/profile";
 
 function TransferDetail(props) {
+  const router = useRouter();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  // Get Data
+  const dataTransfer = router.query;
+  console.log(dataTransfer);
 
-  console.log(props);
+  // Data User
+  const [dataProfile, setDataProfile] = useState([]);
+  const getDataUser = (event) => {
+    axios
+      .get(`user/profile/${dataTransfer.receiverId}`)
+      .then((res) => {
+        setDataProfile(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  useEffect(() => {
+    getDataUser();
+  }, []);
+  console.log(dataProfile);
+
+  // Get User By id
+  const id = Cookie.get("id");
+  useEffect(() => {}, [props.profile]);
 
   // Confirm Pin
   const [pin, setPin] = useState({});
-
   const addPin = (event) => {
     if (event.target.value) {
       const nextSibling = document.getElementById(
@@ -44,9 +68,8 @@ function TransferDetail(props) {
         toast.info(res.value.data.msg, {
           theme: "colored",
         });
-        setTimeout(() => {
-          router.push("/main/changePin");
-        }, 3000);
+        handleClose();
+        handleTransfer();
       })
       .catch((err) => {
         toast.error(err.response.data.msg, {
@@ -58,6 +81,18 @@ function TransferDetail(props) {
 
   const ResetPin = () => {
     setPin({});
+  };
+
+  // Transfer
+  const handleTransfer = () => {
+    axios
+      .post(`transaction/transfer`, dataTransfer)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -103,8 +138,12 @@ function TransferDetail(props) {
                         }}
                       />
                       <div className="ms-3">
-                        <h5 className="nunito-600">zhongli</h5>
-                        <span className="nunito-400 font-thrid">Notelp</span>
+                        <h5 className="nunito-600">
+                          {dataProfile.firstName + " " + dataProfile.lastName}
+                        </h5>
+                        <span className="nunito-400 font-thrid">
+                          {dataProfile.noTelp}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -124,7 +163,9 @@ function TransferDetail(props) {
                     <div>
                       <div>
                         <span className="nunito-400 font-thrid">Amount</span>
-                        <h5 className="nunito-600 mt-2">Nominal</h5>
+                        <h5 className="nunito-600 mt-2">
+                          {dataTransfer.amount}
+                        </h5>
                       </div>
                     </div>
                   </div>
@@ -143,7 +184,9 @@ function TransferDetail(props) {
                         <span className="nunito-400 font-thrid">
                           Balance Left
                         </span>
-                        <h5 className="nunito-600 mt-2">Nominal</h5>
+                        <h5 className="nunito-600 mt-2">
+                          {dataProfile.balance}
+                        </h5>
                       </div>
                     </div>
                   </div>
@@ -179,7 +222,9 @@ function TransferDetail(props) {
                     <div>
                       <div>
                         <span className="nunito-400 font-thrid">Notes</span>
-                        <h5 className="nunito-600 mt-2">Note</h5>
+                        <h5 className="nunito-600 mt-2">
+                          {dataTransfer.notes}
+                        </h5>
                       </div>
                     </div>
                   </div>
@@ -302,6 +347,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
   ConfirmPin,
+  GetUserById,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TransferDetail);
