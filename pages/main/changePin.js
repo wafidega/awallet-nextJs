@@ -39,6 +39,9 @@ function ChangePin(props) {
         toast.info(res.value.data.msg, {
           theme: "colored",
         });
+        setTimeout(() => {
+          router.push("/main/home");
+        }, 3000);
       })
       .catch((err) => {
         toast.error(err.response.data.msg, {

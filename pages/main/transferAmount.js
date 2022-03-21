@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, withRouter } from "next/router";
+import Cookie from "js-cookie";
 import Navbar from "components/modules/Navbar";
 import SideBar from "components/modules/SideBar";
 import Layout from "components/Layout";
-import { Modal, Button } from "react-bootstrap";
-import axios from "utils/axios";
+import { connect } from "react-redux";
+import { GetUserById } from "stores/action/profile";
 
 function TransactionAmount(props) {
   const router = useRouter();
-  const dataUser = router.query;
-  console.log(dataUser);
+  // Get data Receiver
+  const dataReceiver = router.query;
+  console.log(dataReceiver);
+  // Transfer
   const [dataTransfer, setDataTransfer] = useState({
-    receiverId: dataUser.id,
+    receiverId: dataReceiver.id,
     amount: "",
     notes: "",
   });
-  // console.log(dataTransfer);
   const handleDataTransfer = (event) => {
     setDataTransfer({
       ...dataTransfer,
@@ -24,16 +26,22 @@ function TransactionAmount(props) {
   };
   const detailProfile = () => {
     console.log(dataTransfer);
-    // router.push("/main/TransferDetail");
     router.push({
       pathname: "/main/TransferDetail",
       query: { ...dataTransfer },
     });
   };
+  // Get Data Sender
+  const [dataSender, setDataSender] = useState();
+  const id = Cookie.get("id");
+  useEffect(() => {
+    setDataSender(props.profile.dataUser);
+  }, [props.profile]);
+  console.log(dataSender);
 
   return (
     <>
-      <Layout title="Transfer Page">
+      <Layout title="Amount">
         <Navbar></Navbar>
         <main className="home-content">
           <div className="row">
@@ -74,9 +82,11 @@ function TransactionAmount(props) {
                         }}
                       />
                       <div className="ms-3">
-                        <h5 className="nunito-600">{dataUser.firstName}</h5>
+                        <h5 className="nunito-600">
+                          {dataReceiver.firstName + " " + dataReceiver.lastName}
+                        </h5>
                         <span className="nunito-400 font-thrid">
-                          {dataUser.noTelp}
+                          {dataReceiver.noTelp}
                         </span>
                       </div>
                     </div>
@@ -123,7 +133,13 @@ function TransactionAmount(props) {
                       className="nunito-700"
                       style={{ marginTop: "40px", marginBottom: "60px" }}
                     >
-                      Available
+                      Balance
+                    </h5>
+                    <h5
+                      className="nunito-700"
+                      style={{ marginTop: "10px", marginBottom: "60px" }}
+                    >
+                      Rp. {dataSender ? dataSender.balance : "-0"}
                     </h5>
 
                     <input
@@ -152,4 +168,10 @@ function TransactionAmount(props) {
     </>
   );
 }
-export default withRouter(TransactionAmount);
+
+const mapStateToProps = (state) => {
+  return { profile: state.profile };
+};
+
+const mapDispatchToProps = { GetUserById };
+export default connect(mapStateToProps, mapDispatchToProps)(TransactionAmount);

@@ -24,20 +24,55 @@ import Cookie from "js-cookie";
 
 const Chart = () => {
   const id = Cookie.get("id");
+  const [dataDahsboard, setDataDashboard] = useState([]);
+
+  const getDashboard = () => {
+    axios
+      .get(`/dashboard/${id}`)
+      .then((res) => {
+        setDataDashboard(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
+  };
+
+  useEffect(() => {
+    getDashboard();
+  }, []);
+
+  console.log(dataDahsboard);
+
+  let labelChart = [];
+  dataDahsboard.listIncome?.map((item) => {
+    labelChart.push(item.day);
+  });
+  console.log(labelChart);
+
+  let dataChart = [];
+  dataDahsboard.listIncome?.map((item) => {
+    dataChart.push(item.total);
+  });
+  console.log(dataChart);
+
+  let dataChartExpense = [];
+  dataDahsboard.listExpense?.map((item) => {
+    dataChartExpense.push(item.total);
+  });
+  console.log(dataChartExpense);
 
   const data = {
-    labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
+    labels: labelChart,
     datasets: [
       {
-        label: "Population (millions)",
-        backgroundColor: [
-          "#3e95cd",
-          "#8e5ea2",
-          "#3cba9f",
-          "#e8c3b9",
-          "#c45850",
-        ],
-        data: [2478, 5267, 734, 784, 433],
+        label: "Week History",
+        backgroundColor: ["#3e95cd"],
+        data: dataChart,
+      },
+      {
+        label: "Week History",
+        backgroundColor: ["#8e5ea2"],
+        data: dataChartExpense,
       },
     ],
   };

@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 
 const axiosApiIntances = axios.create({
   baseURL: " https://zwalet.herokuapp.com",
+  // baseURL: " http://localhost:3001/",
 });
 
 // Add a request interceptor

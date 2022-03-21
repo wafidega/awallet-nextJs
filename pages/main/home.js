@@ -68,6 +68,34 @@ export default function Home(props) {
     router.push("/main/TransferPage");
   };
   const router = useRouter();
+  const toHistory = (e) => {
+    e.preventDefault();
+    router.push("/main/history");
+  };
+  // History
+  const [filter, setFilter] = useState({
+    page: 1,
+    limit: 5,
+    filter: "WEEK",
+  });
+  const [dataHistory, setDataHistory] = useState([]);
+
+  const history = () => {
+    axios
+      .get(
+        `/transaction/history?page=${filter.page}&limit=${filter.limit}&filter=${filter.filter}`
+      )
+      .then((res) => {
+        setDataHistory(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
+  };
+
+  useEffect(() => {
+    history();
+  }, []);
   return (
     <>
       <Layout title="HomePage">
@@ -112,64 +140,61 @@ export default function Home(props) {
                   <div className="history-profile card p-5">
                     <div className="d-flex">
                       <p>Transsaction History</p>
-                      <a href="#" className="get-all">
+                      <a href="#" className="get-all" onClick={toHistory}>
                         See All
                       </a>
                     </div>
                     <div>
-                      <div className="d-flex justify-content-between mt-4">
-                        <div className="d-flex">
-                          <img
-                            src="/assets/image/zhongli.png"
-                            alt="porfile"
-                            width="56px"
-                            height="56px"
-                            style={{
-                              borderRadius: "10px",
-                              objectFit: "cover",
-                            }}
-                          />
-                          <div className="ms-3">
-                            <h5 className="nunito-600">Wafi Dega</h5>
-                            <span className="nunito-400 font-thrid">
-                              Accept
-                            </span>
+                      {dataHistory.map((item) => {
+                        <div className="d-flex justify-content-between mt-4">
+                          <div className="d-flex">
+                            <img
+                              src="/assets/image/zhongli.png"
+                              alt="porfile"
+                              width="56px"
+                              height="56px"
+                              style={{
+                                borderRadius: "10px",
+                                objectFit: "cover",
+                              }}
+                            />
+                            <div className="ms-3">
+                              <h5 className="nunito-600">Wafi Dega</h5>
+                              <span className="nunito-400 font-thrid">
+                                Accept
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                        <div
-                          className="align-self-center nunito-700"
-                          style={{ color: "#1EC15F" }}
-                        >
-                          +15.000
-                        </div>
-                      </div>
-                      {/* Tranfer */}
-                      <div className="d-flex justify-content-between mt-4">
-                        <div className="d-flex">
-                          <img
-                            src="/assets/image/zhongli.png"
-                            alt="porfile"
-                            width="56px"
-                            height="56px"
-                            style={{
-                              borderRadius: "10px",
-                              objectFit: "cover",
-                            }}
-                          />
-                          <div className="ms-3">
-                            <h5 className="nunito-600">Wafi Dega</h5>
-                            <span className="nunito-400 font-thrid">
-                              Transfer
-                            </span>
+                          {item.type === "send" ? (
+                            <div
+                              className="align-self-center nunito-700"
+                              style={{ color: "#FF5B37" }}
+                            >
+                              +15.000
+                            </div>
+                          ) : item.type === "topup" ? (
+                            <div
+                              className="align-self-center nunito-700"
+                              style={{ color: "#FF5B37" }}
+                            >
+                              +15.000
+                            </div>
+                          ) : (
+                            <div
+                              className="align-self-center nunito-700"
+                              style={{ color: "#1EC15F" }}
+                            >
+                              +15.000
+                            </div>
+                          )}
+                          <div
+                            className="align-self-center nunito-700"
+                            style={{ color: "#1EC15F" }}
+                          >
+                            +15.000
                           </div>
-                        </div>
-                        <div
-                          className="align-self-center nunito-700"
-                          style={{ color: "#FF5B37" }}
-                        >
-                          -15.000
-                        </div>
-                      </div>
+                        </div>;
+                      })}
                     </div>
                   </div>
                 </div>

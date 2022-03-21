@@ -55,6 +55,7 @@ function Login(props) {
         toast.error(err.response.data.msg, {
           theme: "colored",
         });
+        console.log(err);
       });
   };
   const handleChangeText = (e) => {

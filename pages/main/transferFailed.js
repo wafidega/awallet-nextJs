@@ -10,10 +10,13 @@ import { connect } from "react-redux";
 import { ConfirmPin } from "stores/action/profile";
 import { GetUserById } from "stores/action/profile";
 
-function TransferSuccess(props) {
+function TransferFailed(props) {
+  const router = useRouter();
+  const dataTransfer = router.query;
+  console.log(dataTransfer);
   return (
     <>
-      <Layout title="Transfer Page">
+      <Layout title="Transfer Failed">
         <Navbar></Navbar>
         <main className="home-content">
           <div className="row">
@@ -163,4 +166,4 @@ function TransferSuccess(props) {
   );
 }
 
-export default TransferSuccess;
+export default TransferFailed;

@@ -5,6 +5,7 @@ import SideBar from "components/modules/SideBar";
 import Layout from "components/Layout";
 import { Modal, Button } from "react-bootstrap";
 import axios from "utils/axios";
+import Cookie from "js-cookie";
 import { toast, ToastContainer } from "react-toastify";
 import { connect } from "react-redux";
 import { ConfirmPin } from "stores/action/profile";
@@ -19,7 +20,7 @@ function TransferDetail(props) {
   const dataTransfer = router.query;
   console.log(dataTransfer);
 
-  // Data User
+  // Data Receiver
   const [dataProfile, setDataProfile] = useState([]);
   const getDataUser = (event) => {
     axios
@@ -35,10 +36,6 @@ function TransferDetail(props) {
     getDataUser();
   }, []);
   console.log(dataProfile);
-
-  // Get User By id
-  const id = Cookie.get("id");
-  useEffect(() => {}, [props.profile]);
 
   // Confirm Pin
   const [pin, setPin] = useState({});
@@ -83,21 +80,37 @@ function TransferDetail(props) {
     setPin({});
   };
 
+  // Get Data Sender (to get balance sender)
+  const [dataSender, setDataSender] = useState();
+  const id = Cookie.get("id");
+  useEffect(() => {
+    setDataSender(props.profile.dataUser);
+  }, [props.profile]);
+  // console.log(dataSender.balance);
+
   // Transfer
   const handleTransfer = () => {
+    console.log(dataTransfer);
     axios
       .post(`transaction/transfer`, dataTransfer)
       .then((res) => {
         console.log(res);
+        router.push({
+          pathname: "/main/transferSuccess",
+          query: { ...dataTransfer },
+        });
       })
       .catch((error) => {
-        console.log(error);
+        router.push({
+          pathname: "/main/transferFailed",
+          query: { ...dataTransfer },
+        });
       });
   };
 
   return (
     <>
-      <Layout title="Transfer Page">
+      <Layout title="Transfer Details">
         <Navbar></Navbar>
         <main className="home-content">
           <div className="row">
@@ -139,10 +152,12 @@ function TransferDetail(props) {
                       />
                       <div className="ms-3">
                         <h5 className="nunito-600">
-                          {dataProfile.firstName + " " + dataProfile.lastName}
+                          {/* {dataProfile.firstName + " " + dataProfile.lastName} */}
+                          Wafi Dega
                         </h5>
                         <span className="nunito-400 font-thrid">
-                          {dataProfile.noTelp}
+                          {/* {dataProfile.noTelp} */}
+                          081218049667
                         </span>
                       </div>
                     </div>
@@ -184,9 +199,7 @@ function TransferDetail(props) {
                         <span className="nunito-400 font-thrid">
                           Balance Left
                         </span>
-                        <h5 className="nunito-600 mt-2">
-                          {dataProfile.balance}
-                        </h5>
+                        <h5 className="nunito-600 mt-2">Rp. 100000</h5>
                       </div>
                     </div>
                   </div>
@@ -223,7 +236,8 @@ function TransferDetail(props) {
                       <div>
                         <span className="nunito-400 font-thrid">Notes</span>
                         <h5 className="nunito-600 mt-2">
-                          {dataTransfer.notes}
+                          {/* {dataTransfer.notes} */}
+                          Ini buat jajan
                         </h5>
                       </div>
                     </div>

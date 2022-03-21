@@ -11,9 +11,30 @@ import { ConfirmPin } from "stores/action/profile";
 import { GetUserById } from "stores/action/profile";
 
 function TransferSuccess(props) {
+  const router = useRouter();
+  const dataTransfer = router.query;
+  console.log(dataTransfer);
+
+  // Data User Transfer Receiver
+  const [dataProfile, setDataProfile] = useState([]);
+  const getDataUser = (event) => {
+    axios
+      .get(`user/profile/${dataTransfer.receiverId}`)
+      .then((res) => {
+        setDataProfile(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  useEffect(() => {
+    getDataUser();
+  }, []);
+  console.log(dataProfile);
+
   return (
     <>
-      <Layout title="Transfer Page">
+      <Layout title="Transfer Success">
         <Navbar></Navbar>
         <main className="home-content">
           <div className="row">
