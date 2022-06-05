@@ -31,7 +31,7 @@ const profile = (state = initialState, action) => {
       };
     }
     // Get User
-    case "UPDATE_PHONE_PENDING": {
+    case "GET_USER_PENDING": {
       return {
         ...state,
         isLoading: true,

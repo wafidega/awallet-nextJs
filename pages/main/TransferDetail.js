@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, withRouter } from "next/router";
+import moment from "moment";
 import Navbar from "components/modules/Navbar";
 import SideBar from "components/modules/SideBar";
 import Layout from "components/Layout";
@@ -9,7 +10,7 @@ import Cookie from "js-cookie";
 import { toast, ToastContainer } from "react-toastify";
 import { connect } from "react-redux";
 import { ConfirmPin } from "stores/action/profile";
-import { GetUserById } from "stores/action/profile";
+import { GetUserById } from "stores/action/transfer";
 
 function TransferDetail(props) {
   const router = useRouter();
@@ -31,11 +32,20 @@ function TransferDetail(props) {
       .catch((error) => {
         console.log(error);
       });
+    // props
+    //   .GetUserById(dataTransfer.receiverId)
+    //   .then((res) => {
+    //     setDataProfile(res.data.data);
+    //     console.log(res);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   };
   useEffect(() => {
     getDataUser();
   }, []);
-  console.log(dataProfile);
+  // console.log(dataProfile);
 
   // Confirm Pin
   const [pin, setPin] = useState({});
@@ -86,7 +96,7 @@ function TransferDetail(props) {
   useEffect(() => {
     setDataSender(props.profile.dataUser);
   }, [props.profile]);
-  // console.log(dataSender.balance);
+  console.log(props.profile.dataUser);
 
   // Transfer
   const handleTransfer = () => {
@@ -107,6 +117,13 @@ function TransferDetail(props) {
         });
       });
   };
+
+  // Date Now
+  // const current = new Date();
+  // const date = `${current.getDate()}/${
+  //   current.getMonth() + 1
+  // }/${current.getFullYear()}`;
+  var CurrentDate = moment().format("MMMM Do YYYY, h:mm:ss a");
 
   return (
     <>
@@ -152,12 +169,12 @@ function TransferDetail(props) {
                       />
                       <div className="ms-3">
                         <h5 className="nunito-600">
-                          {/* {dataProfile.firstName + " " + dataProfile.lastName} */}
-                          Wafi Dega
+                          {dataProfile
+                            ? dataProfile.firstName + " " + dataProfile.lastName
+                            : "-"}
                         </h5>
                         <span className="nunito-400 font-thrid">
-                          {/* {dataProfile.noTelp} */}
-                          081218049667
+                          {dataProfile ? dataProfile.noTelp : "-"}
                         </span>
                       </div>
                     </div>
@@ -199,7 +216,9 @@ function TransferDetail(props) {
                         <span className="nunito-400 font-thrid">
                           Balance Left
                         </span>
-                        <h5 className="nunito-600 mt-2">Rp. 100000</h5>
+                        <h5 className="nunito-600 mt-2">
+                          Rp. {dataSender ? dataSender.balance : "-0"}
+                        </h5>
                       </div>
                     </div>
                   </div>
@@ -218,7 +237,7 @@ function TransferDetail(props) {
                         <span className="nunito-400 font-thrid">
                           Date And Time
                         </span>
-                        <h5 className="nunito-600 mt-2">Date</h5>
+                        <h5 className="nunito-600 mt-2">{CurrentDate}</h5>
                       </div>
                     </div>
                   </div>
@@ -236,8 +255,7 @@ function TransferDetail(props) {
                       <div>
                         <span className="nunito-400 font-thrid">Notes</span>
                         <h5 className="nunito-600 mt-2">
-                          {/* {dataTransfer.notes} */}
-                          Ini buat jajan
+                          {dataTransfer.notes}
                         </h5>
                       </div>
                     </div>
@@ -356,7 +374,7 @@ function TransferDetail(props) {
   );
 }
 const mapStateToProps = (state) => {
-  return { profile: state.profile };
+  return { profile: state.profile, transfer: state.transfer };
 };
 
 const mapDispatchToProps = {
